@@ -21,13 +21,12 @@ html.dark {
 }
 
 * { box-sizing: border-box; }
-html {
-  background: var(--background);
-  accent-color: var(--brand);
-}
+html { max-width: 100%; overflow-x: hidden; background: var(--background); accent-color: var(--brand); }
 body {
   margin: 0;
   min-width: 320px;
+  max-width: 100%;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at 12% -10%, color-mix(in srgb, var(--brand) 13%, transparent), transparent 28rem),
     var(--background);
@@ -37,5 +36,6 @@ body {
 }
 ::selection { background: color-mix(in srgb, var(--brand) 28%, transparent); }
 a { color: inherit; text-decoration: none; }
-button, input, select, textarea { font: inherit; }
+button, input, select, textarea { max-width: 100%; font: inherit; }
 button { -webkit-tap-highlight-color: transparent; }
+img, video, svg { max-width: 100%; }
