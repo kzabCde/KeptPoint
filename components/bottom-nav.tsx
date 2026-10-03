@@ -6,11 +6,11 @@ import { Activity, House, QrCode, UserRound, WalletCards } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
-  { href: "/home", label: "Home", icon: House },
-  { href: "/wallet", label: "Wallet", icon: WalletCards },
+  { href: "/home", label: "Home", icon: House, primary: false },
+  { href: "/wallet", label: "Wallet", icon: WalletCards, primary: false },
   { href: "/scan", label: "Scan", icon: QrCode, primary: true },
-  { href: "/activity", label: "Activity", icon: Activity },
-  { href: "/profile", label: "Profile", icon: UserRound },
+  { href: "/activity", label: "Activity", icon: Activity, primary: false },
+  { href: "/profile", label: "Profile", icon: UserRound, primary: false },
 ] as const;
 
 export function BottomNav() {
