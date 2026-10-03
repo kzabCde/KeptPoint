@@ -53,23 +53,23 @@ Verification:
 
 - Local TypeScript parser check: 0 syntax diagnostics on the original scaffold.
 - Pure TypeScript domain tests: 4/4 passed on the original scaffold.
-- Generated database types now match the live development schema.
-- GitHub Actions CI workflow is the authoritative full dependency/build gate.
+- Generated database types match the live development schema.
+- GitHub Actions CI run #15 passed on October 3, 2026:
+  - dependency install: passed
+  - lint: passed
+  - full typecheck: passed
+  - tests: passed
+  - production build: passed
+- TypeScript is pinned to the TypeScript 6 compatibility package required by the current Next.js/typescript-eslint toolchain.
 
 ## Still required before Vercel Preview
 
-1. GitHub Actions CI must pass:
-   - dependency install
-   - lint
-   - full typecheck
-   - tests
-   - production build
-2. Commit a generated npm lockfile for reproducible installs.
-3. Configure real Supabase environment variables outside source control.
-4. Configure Auth providers/redirect URLs and email confirmation template.
-5. Add path-scoped Storage object policies before enabling uploads.
-6. Run end-to-end two-user tests for join -> issue -> wallet -> redeem -> staff confirm.
-7. Add/verify in-app camera decoder if required for the Scan UX.
-8. Only after these gates pass, create a Vercel Preview deployment.
+1. Commit a generated npm lockfile for reproducible installs.
+2. Configure real Supabase environment variables outside source control.
+3. Configure Auth providers/redirect URLs and email confirmation template.
+4. Add path-scoped Storage object policies before enabling uploads.
+5. Run end-to-end two-user tests for join -> issue -> wallet -> redeem -> staff confirm.
+6. Add/verify in-app camera decoder if required for the Scan UX.
+7. Only after these remaining gates pass, create a Vercel Preview deployment.
 
 Do not deploy to Vercel while any CI/build gate is failing or pending.
