@@ -10,6 +10,7 @@ const errors = {
   "invalid-fields": { th: "กรุณากรอกข้อมูลให้ครบ Username ใช้ a-z, 0-9 และ _ จำนวน 3–30 ตัว", en: "Check all fields. Username must use a-z, 0-9 or _ and be 3–30 characters." },
   "password-mismatch": { th: "รหัสผ่านทั้งสองช่องไม่ตรงกัน", en: "Passwords do not match." },
   "signup-failed": { th: "สร้างบัญชีไม่สำเร็จ กรุณาลองอีกครั้ง หรือเข้าสู่ระบบหากเคยสมัครแล้ว", en: "Could not create the account. Try again, or sign in if you already registered." },
+  "email-rate-limit": { th: "ระบบส่งอีเมลถึงขีดจำกัดชั่วคราว กรุณารอสักครู่แล้วลองสมัครหรือส่งอีเมลยืนยันอีกครั้ง", en: "Email sending is temporarily rate-limited. Wait a little, then retry signup or resend confirmation." },
 } as const;
 
 export default async function SignupPage({ searchParams }: { searchParams: Promise<{ error?: keyof typeof errors }> }) {

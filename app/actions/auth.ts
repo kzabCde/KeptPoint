@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { isLocale, isTheme, setPreferenceCookies } from "@/lib/preferences";
 import { postAuthDestination } from "@/lib/auth-flow";
+import { isEmailSendRateLimit } from "@/lib/auth-errors";
 
 function readEmail(formData: FormData) {
   return String(formData.get("email") ?? "").trim().toLowerCase();
@@ -77,7 +78,10 @@ export async function signUpWithEmail(formData: FormData) {
     },
   });
 
-  if (error) redirect("/signup?error=signup-failed");
+  if (error) {
+    if (isEmailSendRateLimit(error)) redirect("/signup?error=email-rate-limit");
+    redirect("/signup?error=signup-failed");
+  }
 
   if (data.session && data.user) {
     await profileForUser(data.user.id);
@@ -97,7 +101,10 @@ export async function resendConfirmation(formData: FormData) {
     email,
     options: { emailRedirectTo: `${origin}/auth/confirm?next=/onboarding` },
   });
-  if (error) redirect("/signup/check-email?error=resend-failed");
+  if (error) {
+    if (isEmailSendRateLimit(error)) redirect("/signup/check-email?error=email-rate-limit");
+    redirect("/signup/check-email?error=resend-failed");
+  }
   redirect("/signup/check-email?status=resent");
 }
 
@@ -113,7 +120,10 @@ export async function sendMagicLink(formData: FormData) {
       emailRedirectTo: `${origin}/auth/confirm?next=/home`,
     },
   });
-  if (error) redirect("/login?error=magic-link-failed");
+  if (error) {
+    if (isEmailSendRateLimit(error)) redirect("/login?error=email-rate-limit");
+    redirect("/login?error=magic-link-failed");
+  }
   redirect("/login?status=magic-sent");
 }
 
