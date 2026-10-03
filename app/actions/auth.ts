@@ -35,6 +35,10 @@ async function appOrigin() {
   return host ? `${proto}://${host}` : "https://keptpoint.vercel.app";
 }
 
+function isEmailRateLimit(error: { code?: string; status?: number } | null) {
+  return Boolean(error && (error.code === "over_email_send_rate_limit" || error.status === 429));
+}
+
 async function profileForUser(userId: string) {
   const supabase = await createClient();
   const { data: profile } = await supabase.from("profiles").select("username,locale,theme").eq("id", userId).maybeSingle();
@@ -77,7 +81,10 @@ export async function signUpWithEmail(formData: FormData) {
     },
   });
 
-  if (error) redirect("/signup?error=signup-failed");
+  if (error) {
+    if (isEmailRateLimit(error)) redirect("/signup?error=email-rate-limit");
+    redirect("/signup?error=signup-failed");
+  }
 
   if (data.session && data.user) {
     await profileForUser(data.user.id);
@@ -97,7 +104,10 @@ export async function resendConfirmation(formData: FormData) {
     email,
     options: { emailRedirectTo: `${origin}/auth/confirm?next=/onboarding` },
   });
-  if (error) redirect("/signup/check-email?error=resend-failed");
+  if (error) {
+    if (isEmailRateLimit(error)) redirect("/signup/check-email?error=email-rate-limit");
+    redirect("/signup/check-email?error=resend-failed");
+  }
   redirect("/signup/check-email?status=resent");
 }
 
@@ -113,7 +123,10 @@ export async function sendMagicLink(formData: FormData) {
       emailRedirectTo: `${origin}/auth/confirm?next=/home`,
     },
   });
-  if (error) redirect("/login?error=magic-link-failed");
+  if (error) {
+    if (isEmailRateLimit(error)) redirect("/login?error=email-rate-limit");
+    redirect("/login?error=magic-link-failed");
+  }
   redirect("/login?status=magic-sent");
 }
 
