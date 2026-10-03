@@ -3,7 +3,8 @@
   "git": {
     "deploymentEnabled": {
       "fix/mvp-completion-v0.1.1": false,
-      "fix/auth-null-render-hotfix": false
+      "fix/auth-null-render-hotfix": false,
+      "fix/auth-onboarding-flow-v0.1.2": false
     }
   }
 }

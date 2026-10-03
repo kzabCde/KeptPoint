@@ -7,6 +7,8 @@ export default async function AppLayout({ children }: Readonly<{ children: React
   const [locale, supabase] = await Promise.all([getLocale(), createClient()]);
   const { data } = await supabase.auth.getUser();
   if (!data.user) redirect("/login");
+  const {data:profile}=await supabase.from("profiles").select("username").eq("id",data.user.id).maybeSingle();
+  if(!profile?.username) redirect("/onboarding");
 
   return (
     <div className="mx-auto min-h-dvh max-w-xl overflow-x-hidden border-x border-zinc-200/70 bg-zinc-50/90 pb-28 dark:border-zinc-900 dark:bg-[#091310]/95">
