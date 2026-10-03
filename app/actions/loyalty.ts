@@ -60,7 +60,7 @@ export async function issuePoints(input: { programId: string; memberId: string; 
     p_program_id: valid.programId,
     p_member_id: valid.memberId,
     p_amount: valid.amount,
-    p_note: valid.note ?? null,
+    p_note: valid.note ?? undefined,
     p_idempotency_key: valid.idempotencyKey,
   });
   if (error) throw new Error(error.message);
@@ -73,7 +73,7 @@ export async function issueStamp(input: { programId: string; memberId: string; a
     p_program_id: input.programId,
     p_member_id: input.memberId,
     p_amount: input.amount ?? 1,
-    p_note: input.note ?? null,
+    p_note: input.note ?? undefined,
     p_idempotency_key: randomUUID(),
   });
   if (error) throw new Error(error.message);
@@ -120,7 +120,7 @@ export async function redeemReward(rewardId: string) {
   const { data, error } = await supabase.rpc("redeem_reward", { p_reward_id: rewardId, p_idempotency_key: randomUUID() });
   if (error) throw new Error(error.message);
   revalidatePath("/activity");
-  return data;
+  void data;
 }
 
 export async function completeRedemption(redemptionId: string, slug: string) {
