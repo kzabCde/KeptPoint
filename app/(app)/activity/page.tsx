@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getLocale } from "@/lib/preferences";
 import { messages } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/server";
@@ -12,7 +13,8 @@ export default async function ActivityPage({ searchParams }: { searchParams: Pro
   const { type="all" }=await searchParams;
   const supabase=await createClient();
   const { data:auth }=await supabase.auth.getUser();
-  const userId=auth.user!.id;
+  if(!auth.user) redirect("/login");
+  const userId=auth.user.id;
   const [{data:points},{data:stamps},{data:redemptions}]=await Promise.all([
     supabase.from("point_transactions").select("id,amount,type,note,created_at,programs(name)").eq("user_id",userId).order("created_at",{ascending:false}).limit(50),
     supabase.from("stamp_transactions").select("id,amount,type,note,created_at,programs(name)").eq("user_id",userId).order("created_at",{ascending:false}).limit(50),

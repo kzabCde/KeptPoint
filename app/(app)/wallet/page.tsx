@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Search } from "lucide-react";
 import { ProgramCard } from "@/components/program-card";
 import { messages } from "@/lib/i18n";
@@ -14,7 +15,8 @@ export default async function WalletPage({ searchParams }: { searchParams: Promi
   const { q = "", type = "all" } = await searchParams;
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
-  const userId = auth.user!.id;
+  if (!auth.user) redirect("/login");
+  const userId = auth.user.id;
 
   const [{ data: memberships }, { data: accounts }, { data: stampRows }] = await Promise.all([
     supabase.from("program_members").select("program_id,status,programs(id,name,slug,program_type,currency_name)").eq("user_id", userId).eq("status","active").order("joined_at",{ascending:false}),

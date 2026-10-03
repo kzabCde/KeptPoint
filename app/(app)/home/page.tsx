@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Bell, ChevronRight, Plus } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { ProgramCard } from "@/components/program-card";
@@ -12,7 +13,8 @@ export default async function HomePage() {
   const m = messages[locale].home;
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
-  const user = auth.user!;
+  if (!auth.user) redirect("/login");
+  const user = auth.user;
 
   const [{ data: profile }, { data: memberships }, { data: accounts }, { data: stampRows }, { data: pointTx }, { data: stampTx }, unread] = await Promise.all([
     supabase.from("profiles").select("display_name,username").eq("id", user.id).maybeSingle(),
