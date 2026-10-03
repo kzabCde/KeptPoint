@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight, LogOut, QrCode, Settings, Store } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
@@ -13,7 +14,8 @@ export default async function ProfilePage(){
   const m=messages[locale].profile;
   const supabase=await createClient();
   const {data:auth}=await supabase.auth.getUser();
-  const {data:profile}=await supabase.from("profiles").select("display_name,username,avatar_url").eq("id",auth.user!.id).maybeSingle();
+  if(!auth.user) redirect("/login");
+  const {data:profile}=await supabase.from("profiles").select("display_name,username,avatar_url").eq("id",auth.user.id).maybeSingle();
   const displayName=profile?.display_name||auth.user?.email?.split("@")[0]||m.fallbackName;
   const username=profile?.username?"@"+profile.username:auth.user?.email??"@keptpoint";
   const links=[[QrCode,m.myQr,"/scan"],[Store,m.myPrograms,"/programs/new"],[Settings,m.settings,"/settings"]] as const;
