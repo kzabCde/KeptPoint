@@ -12,37 +12,64 @@
 - One-time, short-lived QR sessions; earn QR validation uses the staff member who created the QR rather than the customer who consumes it.
 - Program member/staff tables and role-aware DB helpers.
 - Notifications, campaigns/rules/events, friendships and audit log schema.
-- RLS enabled on exposed application tables.
+- RLS enabled on all 18 exposed application tables.
 - Private SECURITY DEFINER implementations with explicit auth/role checks, with narrow public SECURITY INVOKER RPC wrappers.
+- Sensitive ledger/redemption/QR tables deny direct INSERT/UPDATE/DELETE to anon and authenticated roles.
+- Critical public RPCs deny anon EXECUTE and allow authenticated EXECUTE.
+- Foreign-key covering indexes added from Supabase performance advisor findings.
+- Duplicate permissive SELECT policies removed by splitting management policies into mutation-only policies.
+- Generated Supabase database types committed at `types/database.ts`.
+- Browser/server/proxy Supabase clients are typed with the generated `Database` type.
 - PWA manifest and 192/512 icons.
 - Thai/English-ready message dictionary.
+- GitHub Actions CI gate runs install -> lint -> typecheck -> tests -> production build.
 
-## Verification completed here
+## Supabase development database
 
-- TypeScript parser: all TS/TSX files parse with 0 syntax diagnostics.
-- Pure TypeScript domain typecheck: passed.
-- Node domain tests: 4/4 passed.
-- JSON package manifest: valid.
-- Migration structural checks: required core tables, RLS declarations and RPC wrappers present.
+Project: `gabdlrfoizyfhajyqlvv` (KeptPoint, ap-southeast-1)
 
-## Not yet verified — do not deploy
+Applied migrations:
 
-- `npm install` / lockfile generation could not complete because the package registry is unreachable from this runtime.
-- Full `npm run lint`, `npm run typecheck`, and `npm run build` therefore have not been executed against installed dependencies.
-- The migration has not been applied to a live Keptpoint Supabase project. The connected account currently has no dedicated Keptpoint project, and creating one can incur cost and requires explicit project/organization confirmation.
-- Supabase security/performance advisors have not been run against this migration because it has not been applied remotely.
-- Storage buckets are created by the migration, but upload policies are intentionally not opened yet. Upload UI should remain disabled until path-scoped policies are added and verified.
-- The Scan screen accepts secure QR tokens and native-camera deep links, but an in-app camera decoder adapter is not included in this scaffold.
+1. keptpoint_core_01
+2. keptpoint_core_02
+3. keptpoint_core_03
+4. keptpoint_core_04
+5. keptpoint_core_05
+6. keptpoint_core_06
+7. keptpoint_core_07
+8. keptpoint_performance_indexes_and_policies
 
-## Gate before Preview/Production
+Verification:
 
-1. Install dependencies and commit the generated lockfile.
-2. Run lint.
-3. Run full typecheck.
-4. Run tests.
-5. Apply migration to a development Supabase project.
-6. Generate Supabase TypeScript types.
-7. Run Supabase security/performance advisors and fix findings.
-8. Run end-to-end two-user tests for join -> issue -> wallet -> redeem -> staff confirm.
-9. Run production build.
-10. Only then create a Vercel Preview deployment.
+- 18/18 application tables have RLS enabled.
+- Supabase Security Advisor: 0 findings.
+- Unindexed foreign-key findings: resolved.
+- Multiple permissive policy findings: resolved.
+- Remaining performance notices are only unused-index INFO findings, expected on a new empty database.
+- Sensitive ledger tables have no direct mutation privileges for anon/authenticated.
+- Critical RPCs are not executable by anon and are executable by authenticated.
+
+## Verification completed
+
+- Local TypeScript parser check: 0 syntax diagnostics on the original scaffold.
+- Pure TypeScript domain tests: 4/4 passed on the original scaffold.
+- Generated database types now match the live development schema.
+- GitHub Actions CI workflow is the authoritative full dependency/build gate.
+
+## Still required before Vercel Preview
+
+1. GitHub Actions CI must pass:
+   - dependency install
+   - lint
+   - full typecheck
+   - tests
+   - production build
+2. Commit a generated npm lockfile for reproducible installs.
+3. Configure real Supabase environment variables outside source control.
+4. Configure Auth providers/redirect URLs and email confirmation template.
+5. Add path-scoped Storage object policies before enabling uploads.
+6. Run end-to-end two-user tests for join -> issue -> wallet -> redeem -> staff confirm.
+7. Add/verify in-app camera decoder if required for the Scan UX.
+8. Only after these gates pass, create a Vercel Preview deployment.
+
+Do not deploy to Vercel while any CI/build gate is failing or pending.
