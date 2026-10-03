@@ -51,6 +51,7 @@ export async function joinProgram(programId: string) {
   const { error } = await supabase.rpc("join_program", { p_program_id: programId });
   if (error) throw new Error(error.message);
   revalidatePath("/wallet");
+  revalidatePath("/home");
 }
 
 export async function issuePoints(input: { programId: string; memberId: string; amount: number; note?: string }) {
@@ -156,4 +157,27 @@ export async function acceptQrToken(formData: FormData) {
   const { error } = await supabase.rpc("accept_qr_session", { p_token: token });
   if (error) throw new Error(error.message);
   redirect("/activity?qr=success");
+}
+
+
+export async function issuePointsForm(formData: FormData) {
+  const programId = String(formData.get("programId") ?? "");
+  const memberId = String(formData.get("memberId") ?? "");
+  const slug = String(formData.get("slug") ?? "");
+  const amount = Number(formData.get("amount"));
+  await issuePoints({ programId, memberId, amount });
+  revalidatePath("/programs/" + slug + "/manage/members");
+  revalidatePath("/home");
+  redirect("/programs/" + slug + "/manage/members?ok=points");
+}
+
+export async function issueStampForm(formData: FormData) {
+  const programId = String(formData.get("programId") ?? "");
+  const memberId = String(formData.get("memberId") ?? "");
+  const slug = String(formData.get("slug") ?? "");
+  const amount = Number(formData.get("amount") ?? 1);
+  await issueStamp({ programId, memberId, amount });
+  revalidatePath("/programs/" + slug + "/manage/members");
+  revalidatePath("/home");
+  redirect("/programs/" + slug + "/manage/members?ok=stamp");
 }

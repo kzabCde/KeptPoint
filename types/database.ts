@@ -1028,6 +1028,19 @@ export type Database = {
         Returns: Json
       }
       join_program: { Args: { p_program_id: string }; Returns: Json }
+      list_program_members: {
+        Args: { p_program_id: string }
+        Returns: {
+          balance: number
+          display_name: string
+          joined_at: string
+          last_activity_at: string
+          member_status: string
+          reserved_balance: number
+          user_id: string
+          username: string
+        }[]
+      }
       redeem_reward: {
         Args: { p_idempotency_key?: string; p_reward_id: string }
         Returns: Json

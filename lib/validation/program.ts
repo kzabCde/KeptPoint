@@ -11,6 +11,10 @@ export const createProgramSchema = z.object({
   visibility: visibilitySchema.default("public"),
   currencyName: z.string().trim().min(1).max(30).default("Points"),
   requiredStamps: z.coerce.number().int().min(2).max(100).optional(),
+}).superRefine((value, ctx) => {
+  if ((value.programType === "stamps" || value.programType === "hybrid") && !value.requiredStamps) {
+    ctx.addIssue({ code: "custom", path: ["requiredStamps"], message: "requiredStamps is required for stamp and hybrid programs" });
+  }
 });
 
 export const issueAmountSchema = z.object({
