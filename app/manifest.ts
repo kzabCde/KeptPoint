@@ -10,7 +10,12 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#f7faf8",
     theme_color: "#063c35",
     icons: [
-      { src: "/keptpoint-mark.svg", sizes: "any", type: "image/svg+xml", purpose: "maskable" },
+      {
+        src: "/keptpoint-mark.webp",
+        sizes: "256x256",
+        type: "image/webp",
+        purpose: "any",
+      },
     ],
   };
 }

@@ -7,8 +7,9 @@ export const metadata: Metadata = {
   description: "Keep every point, stamp and reward together.",
   applicationName: "KeptPoint",
   icons: {
-    icon: [{ url: "/keptpoint-mark.svg", type: "image/svg+xml" }],
-    shortcut: "/keptpoint-mark.svg",
+    icon: [{ url: "/keptpoint-mark.webp", type: "image/webp" }],
+    shortcut: "/keptpoint-mark.webp",
+    apple: [{ url: "/keptpoint-mark.webp", type: "image/webp" }],
   },
 };
 
