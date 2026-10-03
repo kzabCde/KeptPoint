@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { isLocale, isTheme, setPreferenceCookies } from "@/lib/preferences";
 
 function credentials(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
@@ -13,8 +14,14 @@ function credentials(formData: FormData) {
 
 export async function loginWithEmail(formData: FormData) {
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(credentials(formData));
+  const { data, error } = await supabase.auth.signInWithPassword(credentials(formData));
   if (error) throw new Error(error.message);
+  if (data.user) {
+    const { data: profile } = await supabase.from("profiles").select("locale,theme").eq("id", data.user.id).maybeSingle();
+    if (profile && isLocale(profile.locale) && isTheme(profile.theme)) {
+      await setPreferenceCookies(profile.locale, profile.theme);
+    }
+  }
   redirect("/home");
 }
 
