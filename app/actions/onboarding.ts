@@ -6,26 +6,28 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
 const schema = z.object({
-  displayName: z.string().trim().min(2).max(80),
   username: z.string().trim().toLowerCase().regex(/^[a-z0-9_]{3,30}$/),
 });
 
 export async function completeOnboarding(formData: FormData) {
-  const parsed = schema.safeParse({
-    displayName: formData.get("displayName"),
-    username: formData.get("username"),
-  });
+  const parsed = schema.safeParse({ username: formData.get("username") });
   if (!parsed.success) redirect("/onboarding?error=invalid-profile");
 
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect("/login?status=session-required");
 
+  const { data: current } = await supabase
+    .from("profiles")
+    .select("display_name")
+    .eq("id", auth.user.id)
+    .maybeSingle();
+
   const { data, error } = await supabase
     .from("profiles")
     .update({
-      display_name: parsed.data.displayName,
       username: parsed.data.username,
+      display_name: current?.display_name || parsed.data.username,
       updated_at: new Date().toISOString(),
     })
     .eq("id", auth.user.id)
