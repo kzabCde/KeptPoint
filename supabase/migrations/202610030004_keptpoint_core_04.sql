@@ -77,7 +77,7 @@ begin
     values(v_redemption.program_id,v_redemption.user_id,v_actor,-v_redemption.reserved_points,'redeem','reward',v_reward.id,v_redemption.id) returning id into v_tx;
     update public.point_accounts set balance=balance-v_redemption.reserved_points,reserved_balance=reserved_balance-v_redemption.reserved_points,lifetime_redeemed=lifetime_redeemed+v_redemption.reserved_points,last_activity_at=now(),updated_at=now() where id=v_account.id;
   elsif v_reward.reward_type='stamps' then
-    select sp, sc into v_progress, v_card from public.stamp_progress sp join public.stamp_cards sc on sc.id=sp.stamp_card_id where sp.id=v_redemption.stamp_progress_id and sp.user_id=v_redemption.user_id and sp.status='reserved' for update of sp;
+    select sp.* into v_progress from public.stamp_progress sp where sp.id=v_redemption.stamp_progress_id and sp.user_id=v_redemption.user_id and sp.status='reserved' for update;\n    if not found then raise exception 'reserved stamp card no longer available'; end if;\n    select sc.* into v_card from public.stamp_cards sc where sc.id=v_progress.stamp_card_id;
     if not found then raise exception 'reserved stamp card no longer available'; end if;
     update public.stamp_progress set status='redeemed',redeemed_at=now(),updated_at=now() where id=v_progress.id;
     if v_card.reset_behavior in ('new_round','reset_same') then
