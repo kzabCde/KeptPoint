@@ -1,0 +1,12 @@
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { completeRedemption } from "@/app/actions/loyalty";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function RedemptionsPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const supabase = await createClient();
+  const { data: program } = await supabase.from("programs").select("id,name").eq("slug", slug).single();
+  const { data: rows } = program ? await supabase.from("reward_redemptions").select("id,user_id,status,reserved_points,created_at,rewards(name)").eq("program_id", program.id).eq("status", "pending").order("created_at") : { data: [] };
+  return <main className="mx-auto min-h-dvh max-w-xl px-5 py-6"><Link href={`/programs/${slug}/manage`} className="inline-flex size-10 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800"><ArrowLeft className="size-4"/></Link><h1 className="mt-7 text-3xl font-semibold tracking-[-0.04em]">Pending redemptions</h1><div className="mt-6 grid gap-3">{(rows ?? []).length === 0 && <p className="rounded-2xl border border-dashed border-zinc-300 p-6 text-sm text-zinc-500 dark:border-zinc-700">No pending redemptions.</p>}{(rows ?? []).map((row)=>{const action=completeRedemption.bind(null,row.id,slug); const reward = Array.isArray(row.rewards) ? row.rewards[0] : row.rewards; return <form action={action} key={row.id} className="rounded-[22px] border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"><p className="font-semibold">{reward?.name ?? "Reward"}</p><p className="mt-1 text-xs text-zinc-500">Member {row.user_id.slice(0,8)}… · reserved {row.reserved_points} pts</p><button className="mt-4 h-10 w-full rounded-xl bg-zinc-950 text-sm font-semibold text-white dark:bg-white dark:text-zinc-950">Confirm redemption</button></form>})}</div></main>;
+}

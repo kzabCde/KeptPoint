@@ -29,7 +29,7 @@ Keptpoint is a universal point and stamp loyalty wallet where one account can bo
 ## Setup
 
 1. Copy `.env.example` to `.env.local` and add a Supabase project URL and publishable key.
-2. Apply `supabase/migrations/202610030001_keptpoint_core.sql` to a development Supabase project.
+2. Apply all SQL files under `supabase/migrations/` to a development Supabase project in filename order.
 3. Configure Supabase Auth providers and redirect URLs.
 4. Install dependencies with `npm ci` (after generating/committing a lockfile in your networked development environment).
 5. Run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build`.
