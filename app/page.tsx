@@ -33,7 +33,7 @@ export default async function LandingPage() {
         </div>
         <div className="relative overflow-hidden rounded-[38px] border border-emerald-900/10 bg-[linear-gradient(145deg,#063c35,#092f2a)] p-7 shadow-2xl shadow-emerald-950/15">
           <div className="absolute -right-20 -top-20 size-64 rounded-full bg-emerald-300/20 blur-3xl"/>
-          <Image src="/keptpoint-mark.svg" alt="" width={220} height={220} className="relative mx-auto drop-shadow-2xl"/>
+          <Image src="/keptpoint-mark.webp" alt="KeptPoint wallet K logo" width={256} height={256} priority className="relative mx-auto w-[220px] drop-shadow-2xl"/>
           <div className="relative mt-7 grid gap-3 sm:grid-cols-3">
             {features.map(([Icon, title, copy]) => (
               <div key={title} className="rounded-[22px] border border-white/10 bg-white/10 p-4 text-white backdrop-blur">
