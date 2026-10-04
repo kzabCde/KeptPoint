@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MailCheck } from "lucide-react";
+import { Check, KeyRound, MailCheck, UserRound } from "lucide-react";
 import { resendConfirmation } from "@/app/actions/auth";
 import { Brand } from "@/components/brand";
 import { getLocale } from "@/lib/preferences";
@@ -7,9 +7,35 @@ import { getLocale } from "@/lib/preferences";
 export const metadata = { title: "Check your email" };
 
 export default async function CheckEmailPage({ searchParams }: { searchParams: Promise<{ status?: string; error?: string }> }) {
-  const locale=await getLocale();
-  const {status,error}=await searchParams;
-  const th=locale==="th";
+  const locale = await getLocale();
+  const { status, error } = await searchParams;
+  const th = locale === "th";
 
-  return <main className="mx-auto flex min-h-dvh max-w-md items-center px-5 py-10"><div className="w-full"><Brand/><div className="mt-8 rounded-[28px] border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950"><MailCheck className="size-10 text-emerald-600 dark:text-emerald-400"/><h1 className="mt-5 text-3xl font-semibold tracking-[-0.04em]">{th?"ตรวจสอบอีเมลของคุณ":"Check your email"}</h1><p className="mt-3 text-sm leading-6 text-zinc-500">{th?"เราได้ส่ง Magic Link แล้ว กดลิงก์ในอีเมลเพื่อยืนยันตัวตนและเข้าสู่ระบบ ระบบจะใช้ Username ที่คุณเลือกสร้างโปรไฟล์ให้อัตโนมัติ":"We sent a magic link. Open it to verify your identity and sign in. KeptPoint will use the username you chose to finish your profile automatically."}</p>{status==="resent"&&<p className="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-200">{th?"ส่ง Magic Link อีกครั้งแล้ว":"Magic link resent."}</p>}{error&&<p className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm leading-6 text-red-800 dark:bg-red-950/30 dark:text-red-200">{error==="email-rate-limit"?(th?"ส่งอีเมลบ่อยเกินขีดจำกัดของระบบ กรุณารอสักครู่ก่อนส่งซ้ำ":"Email sending is temporarily rate-limited. Wait a little before resending."):(th?"ส่ง Magic Link ซ้ำไม่สำเร็จ กรุณาลองใหม่ภายหลัง":"Could not resend the magic link. Try again later.")}</p>}<form action={resendConfirmation} className="mt-6 grid gap-3"><input name="email" type="email" required placeholder={th?"อีเมลที่ใช้สมัคร":"Signup email"} className="h-12 rounded-2xl border border-zinc-200 bg-transparent px-4 outline-none focus:border-emerald-500 dark:border-zinc-800"/><button className="h-12 rounded-2xl border border-zinc-200 font-semibold dark:border-zinc-800">{th?"ส่ง Magic Link อีกครั้ง":"Resend magic link"}</button></form><Link href="/login" className="mt-4 flex h-12 items-center justify-center rounded-2xl bg-emerald-600 font-semibold text-white dark:bg-emerald-400 dark:text-emerald-950">{th?"กลับไปเข้าสู่ระบบ":"Back to sign in"}</Link></div></div></main>;
+  return (
+    <main className="auth-canvas min-h-dvh px-5 py-8">
+      <div className="mx-auto w-full max-w-md">
+        <Brand/>
+        <section className="cute-card mt-7 p-6 sm:p-7">
+          <div className="grid size-16 place-items-center rounded-[22px] bg-lavender-soft text-violet-700 dark:text-violet-200"><MailCheck className="size-8"/></div>
+          <h1 className="mt-5 text-3xl font-semibold tracking-[-0.045em]">{th ? "เช็กอีเมลของคุณ ✉️" : "Check your email ✉️"}</h1>
+          <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{th ? "เราได้ส่งลิงก์ยืนยันแบบใช้ครั้งเดียวแล้ว เปิดลิงก์นั้นบนอุปกรณ์นี้เพื่อกลับมาทำบัญชีให้เสร็จ" : "We sent a single-use verification link. Open it on this device to return and finish your account."}</p>
+
+          <div className="mt-6 grid gap-2">
+            <div className="flex items-center gap-3 rounded-2xl bg-mint-soft px-4 py-3"><span className="grid size-8 shrink-0 place-items-center rounded-full bg-emerald-600 text-white"><Check className="size-4"/></span><div><p className="text-sm font-semibold">{th ? "1. เลือก Username แล้ว" : "1. Username chosen"}</p><p className="text-xs text-zinc-600 dark:text-zinc-300">{th ? "ระบบจะพยายามจองชื่อให้หลังยืนยัน" : "We’ll save it after verification."}</p></div></div>
+            <div className="flex items-center gap-3 rounded-2xl bg-lavender-soft px-4 py-3"><span className="grid size-8 shrink-0 place-items-center rounded-full bg-violet-600 text-white"><MailCheck className="size-4"/></span><div><p className="text-sm font-semibold">{th ? "2. กดลิงก์ในอีเมล" : "2. Open the email link"}</p><p className="text-xs text-zinc-600 dark:text-zinc-300">{th ? "ลิงก์นี้ใช้ยืนยันตัวตนและสร้าง session" : "This verifies you and creates a session."}</p></div></div>
+            <div className="flex items-center gap-3 rounded-2xl bg-reward-soft px-4 py-3"><span className="grid size-8 shrink-0 place-items-center rounded-full bg-amber-500 text-amber-950"><KeyRound className="size-4"/></span><div><p className="text-sm font-semibold">{th ? "3. ตั้งรหัสผ่าน" : "3. Create a password"}</p><p className="text-xs text-zinc-600 dark:text-zinc-300">{th ? "หลังจากนั้นล็อกอินปกติได้โดยไม่ต้องรออีเมล" : "Then sign in normally without waiting for email."}</p></div></div>
+          </div>
+
+          {status === "resent" && <p className="mt-5 rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/35 dark:text-emerald-200">{th ? "ส่งลิงก์ยืนยันอีกครั้งแล้ว" : "Verification link resent."}</p>}
+          {error && <p role="alert" className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{error === "email-rate-limit" ? (th ? "ส่งอีเมลบ่อยเกินขีดจำกัด กรุณารอสักครู่ก่อนส่งซ้ำ" : "Email sending is temporarily rate-limited. Wait a little before resending.") : (th ? "ส่งลิงก์ซ้ำไม่สำเร็จ กรุณาลองใหม่ภายหลัง" : "Could not resend the verification link. Try again later.")}</p>}
+
+          <form action={resendConfirmation} className="mt-6 grid gap-3">
+            <input name="email" type="email" required placeholder={th ? "อีเมลที่ใช้สมัคร" : "Signup email"} className="cute-input h-12 px-4 outline-none"/>
+            <button className="cute-secondary h-12 rounded-2xl font-semibold">{th ? "ส่งลิงก์อีกครั้ง" : "Resend link"}</button>
+          </form>
+          <Link href="/login" className="mt-4 flex min-h-11 items-center justify-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300"><UserRound className="size-4"/>{th ? "กลับไปหน้าเข้าสู่ระบบ" : "Back to sign in"}</Link>
+        </section>
+      </div>
+    </main>
+  );
 }
