@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/supabase/config";
-import type { Database } from "@/types/database";
+import type { Database } from "@/types/database-v014";
 import { cookies } from "next/headers";
 
 export async function createClient() {
