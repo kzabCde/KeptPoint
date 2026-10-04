@@ -37,7 +37,12 @@ async function appOrigin() {
 
 async function profileForUser(userId: string) {
   const supabase = await createClient();
-  const { data: profile } = await supabase.from("profiles").select("username,locale,theme").eq("id", userId).maybeSingle();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("username,password_set,locale,theme")
+    .eq("id", userId)
+    .maybeSingle();
+
   if (profile && isLocale(profile.locale) && isTheme(profile.theme)) {
     await setPreferenceCookies(profile.locale, profile.theme);
   }
@@ -59,8 +64,9 @@ export async function loginWithEmail(formData: FormData) {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword(readCredentials(formData));
   if (error || !data.user) redirect("/login?error=invalid-credentials");
+
   const profile = await profileForUser(data.user.id);
-  redirect(postAuthDestination(profile?.username));
+  redirect(postAuthDestination({ username: profile?.username, passwordSet: profile?.password_set }));
 }
 
 export async function signUpWithEmail(formData: FormData) {
@@ -76,10 +82,8 @@ export async function signUpWithEmail(formData: FormData) {
     email: parsed.data.email,
     options: {
       shouldCreateUser: true,
-      emailRedirectTo: `${origin}/auth/confirm?next=/home`,
-      data: {
-        desired_username: parsed.data.username,
-      },
+      emailRedirectTo: `${origin}/auth/confirm?next=/set-password`,
+      data: { desired_username: parsed.data.username },
     },
   });
 
@@ -95,15 +99,17 @@ export async function signUpWithEmail(formData: FormData) {
 export async function resendConfirmation(formData: FormData) {
   const email = readEmail(formData);
   if (!email) redirect("/signup/check-email?error=email-required");
+
   const origin = await appOrigin();
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
       shouldCreateUser: true,
-      emailRedirectTo: `${origin}/auth/confirm?next=/home`,
+      emailRedirectTo: `${origin}/auth/confirm?next=/set-password`,
     },
   });
+
   if (error) {
     if (isEmailSendRateLimit(error)) redirect("/signup/check-email?error=email-rate-limit");
     redirect("/signup/check-email?error=resend-failed");
@@ -114,6 +120,7 @@ export async function resendConfirmation(formData: FormData) {
 export async function sendMagicLink(formData: FormData) {
   const email = readEmail(formData);
   if (!email) redirect("/login?error=email-required");
+
   const origin = await appOrigin();
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
@@ -123,11 +130,30 @@ export async function sendMagicLink(formData: FormData) {
       emailRedirectTo: `${origin}/auth/confirm?next=/home`,
     },
   });
+
   if (error) {
     if (isEmailSendRateLimit(error)) redirect("/login?error=email-rate-limit");
     redirect("/login?error=magic-link-failed");
   }
   redirect("/login?status=magic-sent");
+}
+
+export async function requestPasswordReset(formData: FormData) {
+  const email = readEmail(formData);
+  if (!email) redirect("/forgot-password?error=email-required");
+
+  const origin = await appOrigin();
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/auth/confirm?next=/reset-password`,
+  });
+
+  if (error && isEmailSendRateLimit(error)) {
+    redirect("/forgot-password?error=email-rate-limit");
+  }
+
+  // Keep the result neutral to avoid account enumeration.
+  redirect("/forgot-password?status=sent");
 }
 
 export async function loginWithGoogle() {
