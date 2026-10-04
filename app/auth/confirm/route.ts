@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("display_name,username,locale,theme")
+    .select("display_name,username,password_set,locale,theme")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
   }
 
   let username = profile?.username ?? null;
+  const passwordSet = profile?.password_set ?? false;
   const pendingUsername = desiredUsername(user, request);
 
   if (!username && pendingUsername) {
@@ -73,15 +74,21 @@ export async function GET(request: NextRequest) {
       const target = new URL("/onboarding?error=username-taken&confirmed=1", request.url);
       const response = NextResponse.redirect(target);
       response.cookies.delete(PENDING_USERNAME_COOKIE);
+      response.headers.set("Cache-Control", "private, no-store");
       return response;
     }
   }
 
-  const destination = postAuthDestination(username, requestedNext);
+  const destination = postAuthDestination(
+    { username, passwordSet },
+    requestedNext,
+  );
   const target = new URL(destination, request.url);
   if (destination === "/onboarding") target.searchParams.set("confirmed", "1");
+  if (destination === "/set-password" && type !== "recovery") target.searchParams.set("welcome", "1");
 
   const response = NextResponse.redirect(target);
   response.cookies.delete(PENDING_USERNAME_COOKIE);
+  response.headers.set("Cache-Control", "private, no-store");
   return response;
 }

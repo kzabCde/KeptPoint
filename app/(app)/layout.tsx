@@ -7,11 +7,18 @@ export default async function AppLayout({ children }: Readonly<{ children: React
   const [locale, supabase] = await Promise.all([getLocale(), createClient()]);
   const { data } = await supabase.auth.getUser();
   if (!data.user) redirect("/login");
-  const {data:profile}=await supabase.from("profiles").select("username").eq("id",data.user.id).maybeSingle();
-  if(!profile?.username) redirect("/onboarding");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("username,password_set")
+    .eq("id", data.user.id)
+    .maybeSingle();
+
+  if (!profile?.username) redirect("/onboarding");
+  if (!profile.password_set) redirect("/set-password");
 
   return (
-    <div className="mx-auto min-h-dvh max-w-xl overflow-x-hidden border-x border-zinc-200/70 bg-zinc-50/90 pb-28 dark:border-zinc-900 dark:bg-[#091310]/95">
+    <div className="app-shell mx-auto min-h-dvh max-w-xl border-x border-emerald-950/5 pb-28 dark:border-white/5">
       {children}
       <BottomNav locale={locale} />
     </div>

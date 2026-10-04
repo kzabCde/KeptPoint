@@ -1,21 +1,38 @@
-# Keptpoint
+# KeptPoint
 
-Keptpoint is a universal point and stamp loyalty wallet where one account can both collect and issue rewards.
+KeptPoint is a universal points, stamps and rewards wallet where one account can both collect rewards and operate loyalty programs.
 
-## MVP implemented in this scaffold
+Production: https://keptpoint.vercel.app
 
-- Mobile-first App Router shell with Home, Wallet, Scan, Activity, Profile
-- Supabase SSR clients and Next.js `proxy.ts` session refresh
-- Email/password, magic-link and Google OAuth entry points
-- Program creation form for points, stamps and hybrid programs
-- Wallet/program/reward/stamp UI primitives
-- Server actions wired to Supabase RPCs
-- PostgreSQL schema with RLS, ledger tables, audit logs and secure RPC wrappers
-- Atomic point issuing, stamp issuing, program join and reward redemption
-- Short-lived one-time QR session primitives
-- PWA manifest and install-ready assets
-- Thai/English-ready message dictionary structure
-- Pure TypeScript ledger invariants with Node tests
+## v0.1.4 — Hybrid Auth + Cute UX Refresh
+
+KeptPoint v0.1.4 moves authentication to a hybrid model and introduces a warmer, friendlier reward-wallet design.
+
+### Authentication
+
+- First registration: Username + Email → one-time email link → authenticated session → mandatory Set Password → Home
+- Everyday login: Email + Password
+- Magic Link remains available as a secondary login method
+- Forgot Password → recovery email → Reset Password
+- Settings → Security → Change Password
+- Email rate-limit errors are handled without exposing account existence
+- `profiles.password_set` tracks whether account setup is complete; existing password users are backfilled during migration
+
+For production-scale authentication email delivery, configure **Custom SMTP** in Supabase. Do not commit SMTP credentials to this repository.
+
+### Loyalty experience
+
+- Real Supabase-backed Home, Wallet, Activity and Notifications
+- Points, stamps and hybrid loyalty programs
+- Visual stamp grids and reward progress
+- Locked / almost available / available / pending / redeemed reward states
+- QR scanning with secure one-time server validation
+- Program owner/staff member management and issuing flows
+- Merchant overview with member/reward/redemption/activity summaries
+
+### Design
+
+The v0.1.4 UI uses the approved KeptPoint artwork and a friendly reward-wallet visual language: deep teal, mint, warm gold, coral and lavender; rounded tactile cards; clearer empty/loading/error states; Thai/English; Light/Dark/System themes; mobile-first safe-area-aware navigation.
 
 ## Important transaction rules
 
@@ -29,13 +46,14 @@ Keptpoint is a universal point and stamp loyalty wallet where one account can bo
 ## Setup
 
 1. Copy `.env.example` to `.env.local` and add a Supabase project URL and publishable key.
-2. Apply all SQL files under `supabase/migrations/` to a development Supabase project in filename order.
-3. Configure Supabase Auth providers and redirect URLs.
-4. Install dependencies with `npm ci` (after generating/committing a lockfile in your networked development environment).
-5. Run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build`.
+2. Apply all SQL files under `supabase/migrations/` in filename order.
+3. Configure Supabase Auth Site URL, allowed redirect URLs, email templates and optional OAuth providers.
+4. Configure Custom SMTP before higher-volume production use.
+5. Install dependencies.
+6. Run `npm run lint`, `npm run typecheck`, `npm test`, and `npm run build`.
 
-Do not deploy until all four checks pass.
+Do not deploy until all four checks pass. Do not create a Vercel Preview before the CI gate is green.
 
 ## Security note
 
-Never place a Supabase secret/service-role key in `NEXT_PUBLIC_*`. The frontend only needs the project URL and publishable key. Critical mutations are performed through authenticated database RPCs and RLS-protected data access.
+Never place a Supabase secret/service-role key, SMTP password or other privileged credential in `NEXT_PUBLIC_*` or source control. The frontend only needs the project URL and publishable key. Critical mutations are performed through authenticated database RPCs and RLS-protected data access.

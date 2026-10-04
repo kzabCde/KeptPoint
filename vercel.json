@@ -5,7 +5,8 @@
       "fix/mvp-completion-v0.1.1": false,
       "fix/auth-null-render-hotfix": false,
       "fix/auth-onboarding-flow-v0.1.2": false,
-      "fix/passwordless-signup-v0.1.3": false
+      "fix/passwordless-signup-v0.1.3": false,
+      "feat/v0.1.4-hybrid-auth-cute-ui": false
     }
   }
 }

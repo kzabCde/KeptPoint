@@ -19,7 +19,7 @@ export async function completeOnboarding(formData: FormData) {
 
   const { data: current } = await supabase
     .from("profiles")
-    .select("display_name")
+    .select("display_name,password_set")
     .eq("id", auth.user.id)
     .maybeSingle();
 
@@ -42,5 +42,5 @@ export async function completeOnboarding(formData: FormData) {
 
   revalidatePath("/home");
   revalidatePath("/profile");
-  redirect("/home?onboarding=complete");
+  redirect(current?.password_set ? "/home?onboarding=complete" : "/set-password?welcome=1");
 }

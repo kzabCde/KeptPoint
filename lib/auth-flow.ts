@@ -3,7 +3,16 @@ export function safeNextPath(value: string | null | undefined, fallback = "/home
   return value;
 }
 
-export function postAuthDestination(username: string | null | undefined, requested?: string | null) {
-  if (!username) return "/onboarding";
+export type AccountSetupState = {
+  username: string | null | undefined;
+  passwordSet: boolean | null | undefined;
+};
+
+export function postAuthDestination(
+  state: AccountSetupState,
+  requested?: string | null,
+) {
+  if (!state.username) return "/onboarding";
+  if (!state.passwordSet) return "/set-password";
   return safeNextPath(requested, "/home");
 }
