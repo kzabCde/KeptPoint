@@ -5,7 +5,6 @@ export function safeNextPath(value: string | null | undefined, fallback = "/home
 
 export type AccountSetupState = {
   username: string | null | undefined;
-  passwordSet: boolean | null | undefined;
 };
 
 export function postAuthDestination(
@@ -13,6 +12,5 @@ export function postAuthDestination(
   requested?: string | null,
 ) {
   if (!state.username) return "/onboarding";
-  if (!state.passwordSet) return "/set-password";
   return safeNextPath(requested, "/home");
 }
