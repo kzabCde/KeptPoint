@@ -39,11 +39,6 @@ async function updatePassword(formData: FormData, errorPath: string) {
   return auth.user;
 }
 
-export async function setInitialPassword(formData: FormData) {
-  await updatePassword(formData, "/set-password");
-  redirect("/home?status=password-set");
-}
-
 export async function resetPassword(formData: FormData) {
   await updatePassword(formData, "/reset-password");
   redirect("/home?status=password-reset");
