@@ -1,14 +1,12 @@
 "use server";
 
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { isLocale, isTheme, setPreferenceCookies } from "@/lib/preferences";
 import { postAuthDestination } from "@/lib/auth-flow";
 import { isEmailSendRateLimit } from "@/lib/auth-errors";
-
-const PENDING_USERNAME_COOKIE = "keptpoint_pending_username";
 
 function readEmail(formData: FormData) {
   return String(formData.get("email") ?? "").trim().toLowerCase();
@@ -22,9 +20,15 @@ function readCredentials(formData: FormData) {
   return { email, password };
 }
 
-const passwordlessSignUpSchema = z.object({
+const signUpSchema = z.object({
   username: z.string().trim().toLowerCase().regex(/^[a-z0-9_]{3,30}$/),
   email: z.string().trim().toLowerCase().email(),
+  password: z.string().min(8).max(128),
+  confirmPassword: z.string().min(8).max(128),
+}).superRefine((value, ctx) => {
+  if (value.password !== value.confirmPassword) {
+    ctx.addIssue({ code: "custom", path: ["confirmPassword"], message: "password mismatch" });
+  }
 });
 
 async function appOrigin() {
@@ -39,7 +43,7 @@ async function profileForUser(userId: string) {
   const supabase = await createClient();
   const { data: profile } = await supabase
     .from("profiles")
-    .select("username,password_set,locale,theme")
+    .select("username,locale,theme")
     .eq("id", userId)
     .maybeSingle();
 
@@ -49,40 +53,31 @@ async function profileForUser(userId: string) {
   return profile;
 }
 
-async function rememberPendingUsername(username: string) {
-  const store = await cookies();
-  store.set(PENDING_USERNAME_COOKIE, username, {
-    path: "/",
-    maxAge: 60 * 60,
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-}
-
 export async function loginWithEmail(formData: FormData) {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword(readCredentials(formData));
   if (error || !data.user) redirect("/login?error=invalid-credentials");
 
   const profile = await profileForUser(data.user.id);
-  redirect(postAuthDestination({ username: profile?.username, passwordSet: profile?.password_set }));
+  redirect(postAuthDestination({ username: profile?.username }));
 }
 
 export async function signUpWithEmail(formData: FormData) {
-  const parsed = passwordlessSignUpSchema.safeParse({
+  const parsed = signUpSchema.safeParse({
     username: formData.get("username"),
     email: formData.get("email"),
+    password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
   });
   if (!parsed.success) redirect("/signup?error=invalid-fields");
 
   const origin = await appOrigin();
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithOtp({
+  const { error } = await supabase.auth.signUp({
     email: parsed.data.email,
+    password: parsed.data.password,
     options: {
-      shouldCreateUser: true,
-      emailRedirectTo: `${origin}/auth/confirm?next=/set-password`,
+      emailRedirectTo: `${origin}/auth/confirm?next=/home`,
       data: { desired_username: parsed.data.username },
     },
   });
@@ -92,7 +87,6 @@ export async function signUpWithEmail(formData: FormData) {
     redirect("/signup?error=signup-failed");
   }
 
-  await rememberPendingUsername(parsed.data.username);
   redirect("/signup/check-email");
 }
 
@@ -102,11 +96,11 @@ export async function resendConfirmation(formData: FormData) {
 
   const origin = await appOrigin();
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithOtp({
+  const { error } = await supabase.auth.resend({
+    type: "signup",
     email,
     options: {
-      shouldCreateUser: true,
-      emailRedirectTo: `${origin}/auth/confirm?next=/set-password`,
+      emailRedirectTo: `${origin}/auth/confirm?next=/home`,
     },
   });
 
@@ -115,27 +109,6 @@ export async function resendConfirmation(formData: FormData) {
     redirect("/signup/check-email?error=resend-failed");
   }
   redirect("/signup/check-email?status=resent");
-}
-
-export async function sendMagicLink(formData: FormData) {
-  const email = readEmail(formData);
-  if (!email) redirect("/login?error=email-required");
-
-  const origin = await appOrigin();
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      shouldCreateUser: false,
-      emailRedirectTo: `${origin}/auth/confirm?next=/home`,
-    },
-  });
-
-  if (error) {
-    if (isEmailSendRateLimit(error)) redirect("/login?error=email-rate-limit");
-    redirect("/login?error=magic-link-failed");
-  }
-  redirect("/login?status=magic-sent");
 }
 
 export async function requestPasswordReset(formData: FormData) {
@@ -152,7 +125,6 @@ export async function requestPasswordReset(formData: FormData) {
     redirect("/forgot-password?error=email-rate-limit");
   }
 
-  // Keep the result neutral to avoid account enumeration.
   redirect("/forgot-password?status=sent");
 }
 
