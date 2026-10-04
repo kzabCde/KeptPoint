@@ -3,9 +3,9 @@ import assert from "node:assert/strict";
 import { postAuthDestination, safeNextPath } from "../lib/auth-flow.ts";
 import { isEmailSendRateLimit } from "../lib/auth-errors.ts";
 
-test("missing username goes to onboarding",()=>assert.equal(postAuthDestination({ username:null, passwordSet:false },"/home"),"/onboarding"));
-test("verified profile without password goes to set-password",()=>assert.equal(postAuthDestination({ username:"kept_user", passwordSet:false },"/home"),"/set-password"));
-test("complete accounts respect a safe app next path",()=>assert.equal(postAuthDestination({ username:"kept_user", passwordSet:true },"/wallet"),"/wallet"));
+test("missing username goes to onboarding",()=>assert.equal(postAuthDestination({ username:null },"/home"),"/onboarding"));
+test("verified accounts with username go directly home",()=>assert.equal(postAuthDestination({ username:"kept_user" },"/home"),"/home"));
+test("verified accounts respect a safe app next path",()=>assert.equal(postAuthDestination({ username:"kept_user" },"/wallet"),"/wallet"));
 test("unsafe external next paths fall back to home",()=>assert.equal(safeNextPath("//evil.example"),"/home"));
 test("auth callback routes cannot be used as next",()=>assert.equal(safeNextPath("/auth/confirm"),"/home"));
 
