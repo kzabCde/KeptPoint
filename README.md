@@ -6,17 +6,18 @@ Production: https://keptpoint.vercel.app
 
 ## v0.1.4 — Hybrid Auth + Cute UX Refresh
 
-KeptPoint v0.1.4 moves authentication to a hybrid model and introduces a warmer, friendlier reward-wallet design.
+KeptPoint v0.1.4 uses password-based everyday authentication with one-time email verification for new accounts, together with a warmer, friendlier reward-wallet design.
 
 ### Authentication
 
-- First registration: Username + Email → one-time email link → authenticated session → mandatory Set Password → Home
+- First registration: Username + Email + Password → one-time signup verification link → Home
 - Everyday login: Email + Password
-- Magic Link remains available as a secondary login method
+- Magic Link login is not offered
+- Email links are used only for new-account verification and password recovery
 - Forgot Password → recovery email → Reset Password
 - Settings → Security → Change Password
 - Email rate-limit errors are handled without exposing account existence
-- `profiles.password_set` tracks whether account setup is complete; existing password users are backfilled during migration
+- Google OAuth remains an optional separate sign-in provider when configured
 
 For production-scale authentication email delivery, configure **Custom SMTP** in Supabase. Do not commit SMTP credentials to this repository.
 

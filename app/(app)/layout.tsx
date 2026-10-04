@@ -10,12 +10,11 @@ export default async function AppLayout({ children }: Readonly<{ children: React
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("username,password_set")
+    .select("username")
     .eq("id", data.user.id)
     .maybeSingle();
 
   if (!profile?.username) redirect("/onboarding");
-  if (!profile.password_set) redirect("/set-password");
 
   return (
     <div className="app-shell mx-auto min-h-dvh max-w-xl border-x border-emerald-950/5 pb-28 dark:border-white/5">
