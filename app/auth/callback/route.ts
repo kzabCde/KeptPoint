@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     if (!error && data.user) {
       const { data: profile } = await supabase
         .from("profiles")
-        .select("username,password_set,locale,theme")
+        .select("username,locale,theme")
         .eq("id", data.user.id)
         .maybeSingle();
 
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       }
 
       const destination = postAuthDestination(
-        { username: profile?.username, passwordSet: profile?.password_set },
+        { username: profile?.username },
         requestedNext,
       );
       const response = NextResponse.redirect(new URL(destination, request.url));
