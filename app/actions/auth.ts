@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { isLocale, isTheme, setPreferenceCookies } from "@/lib/preferences";
-import { postAuthDestination } from "@/lib/auth-flow";
+import { canonicalAuthOrigin, postAuthDestination } from "@/lib/auth-flow";
 import { isEmailSendRateLimit } from "@/lib/auth-errors";
 
 function readEmail(formData: FormData) {
@@ -36,7 +36,7 @@ async function appOrigin() {
   const forwarded = h.get("x-forwarded-host");
   const host = forwarded ?? h.get("host");
   const proto = h.get("x-forwarded-proto") ?? (host?.includes("localhost") ? "http" : "https");
-  return host ? `${proto}://${host}` : "https://keptpoint.vercel.app";
+  return canonicalAuthOrigin(host ? `${proto}://${host}` : "https://pumppoint.vercel.app");
 }
 
 async function profileForUser(userId: string) {
