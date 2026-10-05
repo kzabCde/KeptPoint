@@ -25,8 +25,8 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
         <div className="mt-6"><Brand/></div>
         <section className="cute-card mt-7 p-6 sm:p-7">
           <div className="flex items-center gap-2 text-xs font-bold text-violet-700 dark:text-violet-200"><Sparkles className="size-4"/>{th ? "เริ่มสะสมความคุ้มค่า" : "Start keeping every reward"}</div>
-          <h1 className="mt-2 text-4xl font-semibold tracking-[-0.055em]">{th ? "สร้างบัญชี KeptPoint" : "Create your KeptPoint account"}</h1>
-          <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{th ? "ตั้ง Username, Email และ Password ให้ครบในครั้งเดียว จากนั้นยืนยันอีเมลด้วยลิงก์ครั้งเดียวแล้วเข้าใช้งานได้ทันที" : "Choose your username, email and password now. Verify your email once, then start using KeptPoint immediately."}</p>
+          <h1 className="mt-2 text-4xl font-semibold tracking-[-0.055em]">{th ? "สร้างบัญชี PumpPoint" : "Create your PumpPoint account"}</h1>
+          <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{th ? "ตั้ง Username, Email และ Password ให้ครบในครั้งเดียว จากนั้นยืนยันอีเมลด้วยลิงก์ครั้งเดียวแล้วเข้าใช้งานได้ทันที" : "Choose your username, email and password now. Verify your email once, then start using PumpPoint immediately."}</p>
 
           {error && errors[error] && <div role="alert" className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{errors[error][locale]}</div>}
 
@@ -37,7 +37,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
           </div>
 
           <form action={signUpWithEmail} className="mt-6 grid gap-5">
-            <label className="grid gap-2 text-sm font-semibold">Username<div className="cute-input flex items-center gap-2 px-4"><AtSign className="size-4 shrink-0 text-emerald-600"/><input name="username" required minLength={3} maxLength={30} autoCapitalize="none" autoCorrect="off" spellCheck={false} className="h-12 min-w-0 flex-1 bg-transparent outline-none" placeholder="kept_user"/></div><span className="text-xs font-normal leading-5 text-zinc-500">{th ? "ใช้ a–z, ตัวเลข และ _ ระบบจะแปลงตัวพิมพ์ใหญ่เป็นตัวเล็กให้" : "Use a-z, numbers and _. Uppercase letters are normalized."}</span></label>
+            <label className="grid gap-2 text-sm font-semibold">Username<div className="cute-input flex items-center gap-2 px-4"><AtSign className="size-4 shrink-0 text-emerald-600"/><input name="username" required minLength={3} maxLength={30} autoCapitalize="none" autoCorrect="off" spellCheck={false} className="h-12 min-w-0 flex-1 bg-transparent outline-none" placeholder="pump_user"/></div><span className="text-xs font-normal leading-5 text-zinc-500">{th ? "ใช้ a–z, ตัวเลข และ _ ระบบจะแปลงตัวพิมพ์ใหญ่เป็นตัวเล็กให้" : "Use a-z, numbers and _. Uppercase letters are normalized."}</span></label>
             <label className="grid gap-2 text-sm font-semibold">{th ? "อีเมล" : "Email"}<div className="cute-input flex items-center gap-2 px-4"><Mail className="size-4 shrink-0 text-emerald-600"/><input name="email" type="email" required autoComplete="email" className="h-12 min-w-0 flex-1 bg-transparent outline-none" placeholder="you@example.com"/></div></label>
             <PasswordFields locale={locale}/>
 

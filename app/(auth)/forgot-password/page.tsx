@@ -19,7 +19,7 @@ export default async function ForgotPasswordPage({ searchParams }: { searchParam
         <section className="cute-card mt-7 p-6 sm:p-7">
           <div className="grid size-14 place-items-center rounded-[20px] bg-coral-soft text-rose-600 dark:text-rose-200"><MailQuestion className="size-7"/></div>
           <h1 className="mt-5 text-3xl font-semibold tracking-[-0.045em]">{th ? "ลืมรหัสผ่าน?" : "Forgot your password?"}</h1>
-          <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{th ? "กรอกอีเมลของบัญชี KeptPoint เราจะส่งลิงก์สำหรับตั้งรหัสผ่านใหม่ให้" : "Enter the email for your KeptPoint account and we’ll send a secure reset link."}</p>
+          <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{th ? "กรอกอีเมลของบัญชี PumpPoint เราจะส่งลิงก์สำหรับตั้งรหัสผ่านใหม่ให้" : "Enter the email for your PumpPoint account and we’ll send a secure reset link."}</p>
 
           {status === "sent" && (
             <div className="mt-5 rounded-2xl bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-800 dark:bg-emerald-950/35 dark:text-emerald-200">

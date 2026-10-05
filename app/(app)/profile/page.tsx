@@ -24,7 +24,7 @@ export default async function ProfilePage() {
   ]);
 
   const displayName = profile?.display_name || profile?.username || auth.user.email?.split("@")[0] || m.fallbackName;
-  const username = profile?.username ? `@${profile.username}` : "@keptpoint";
+  const username = profile?.username ? `@${profile.username}` : "@pumppoint";
   const links = [
     [QrCode, m.myQr, th ? "สแกนเพื่อรับหรือใช้สิทธิ์" : "Scan to collect or redeem", "/scan", "bg-mint-soft text-emerald-700 dark:text-emerald-200"],
     [Store, m.myPrograms, th ? "สร้างและจัดการโปรแกรมของคุณ" : "Create and manage your programs", "/programs/new", "bg-reward-soft text-amber-700 dark:text-amber-200"],
@@ -33,11 +33,11 @@ export default async function ProfilePage() {
   ] as const;
 
   return (
-    <main className="min-w-0 px-5 py-6">
+    <main className="page-wrap min-w-0">
       <section className="cute-card overflow-hidden p-5">
         <div className="flex min-w-0 items-center gap-4">
-          <div className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-[26px] bg-[#073f38] shadow-lg shadow-emerald-950/10">{profile?.avatar_url ? <Image src={profile.avatar_url} alt="" width={80} height={80} className="size-20 object-cover" unoptimized/> : <Image src="/keptpoint-mark.webp" alt="" width={80} height={80}/>}</div>
-          <div className="min-w-0 flex-1"><div className="flex items-center gap-2"><Sparkles className="size-4 text-amber-500"/><span className="text-xs font-bold text-emerald-700 dark:text-emerald-300">KeptPoint member</span></div><h1 className="mt-1 truncate text-2xl font-semibold tracking-[-0.04em]">{displayName}</h1><p className="truncate text-sm font-medium text-zinc-500">{username}</p><div className="mt-2 flex items-center gap-1.5 text-xs text-zinc-500"><Mail className="size-3.5"/><span className="truncate">{auth.user.email}</span></div></div>
+          <div className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-[22px] bg-[#F7F9FC] shadow-sm ring-1 ring-slate-200">{profile?.avatar_url ? <Image src={profile.avatar_url} alt="" width={80} height={80} className="size-20 object-cover" unoptimized/> : <Image src="/pumppoint-mark.svg" alt="" width={72} height={72}/>}</div>
+          <div className="min-w-0 flex-1"><div className="flex items-center gap-2"><Sparkles className="size-4 text-amber-500"/><span className="text-xs font-bold text-emerald-700 dark:text-emerald-300">PumpPoint member</span></div><h1 className="mt-1 truncate text-2xl font-semibold tracking-[-0.04em]">{displayName}</h1><p className="truncate text-sm font-medium text-zinc-500">{username}</p><div className="mt-2 flex items-center gap-1.5 text-xs text-zinc-500"><Mail className="size-3.5"/><span className="truncate">{auth.user.email}</span></div></div>
         </div>
         <div className="mt-5 grid grid-cols-3 gap-2">
           <div className="rounded-2xl bg-mint-soft p-3 text-center"><p className="text-2xl font-semibold text-emerald-800 dark:text-emerald-200">{memberships.count ?? 0}</p><p className="mt-1 text-[11px] font-semibold text-zinc-600 dark:text-zinc-300">{th ? "การ์ด" : "Cards"}</p></div>

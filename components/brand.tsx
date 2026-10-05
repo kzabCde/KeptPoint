@@ -12,12 +12,12 @@ export function BrandMark({
 }) {
   return (
     <Image
-      src="/keptpoint-mark.webp"
-      alt=""
+      src="/pumppoint-mark.svg"
+      alt="PumpPoint"
       width={size}
       height={size}
       priority={priority}
-      className={cn("shrink-0 rounded-[22%] object-contain shadow-sm", className)}
+      className={cn("shrink-0 object-contain", className)}
     />
   );
 }
@@ -25,24 +25,11 @@ export function BrandMark({
 export function BrandWordmark({
   compact = false,
   className = "",
-  priority = false,
 }: {
   compact?: boolean;
   className?: string;
-  priority?: boolean;
 }) {
-  return (
-    <span className={cn("inline-flex items-center rounded-lg bg-white px-1.5 py-1", className)}>
-      <Image
-        src="/keptpoint-wordmark.webp"
-        alt="KeptPoint"
-        width={360}
-        height={80}
-        priority={priority}
-        className={cn("h-auto object-contain", compact ? "w-[112px]" : "w-[142px]")}
-      />
-    </span>
-  );
+  return <span className={cn("inline-flex items-baseline font-extrabold tracking-[-0.055em] text-[#0F2D46] dark:text-white", compact ? "text-xl" : "text-[28px]", className)}><span>Pump</span><span className="text-[#10C9A7]">Point</span></span>;
 }
 
 export function Brand({
@@ -54,8 +41,8 @@ export function Brand({
 }) {
   return (
     <div className={cn("inline-flex items-center gap-2.5", className)}>
-      <BrandMark size={compact ? 36 : 44} priority />
-      <BrandWordmark compact={compact} priority />
+      <BrandMark size={compact ? 36 : 46} priority />
+      <BrandWordmark compact={compact} />
     </div>
   );
 }

@@ -23,7 +23,7 @@ export function ProgramCard({ name, subtitle, locale, href, balance, stamps, pro
     <article className="loyalty-card group min-w-0 p-5 transition">
       <div className="flex min-w-0 items-start justify-between gap-4">
         <div className="flex min-w-0 gap-3">
-          <span className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-[#073f38] text-lg font-bold text-white shadow-sm">{initial}</span>
+          <span className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-[#0F2D46] text-lg font-bold text-white shadow-sm">{initial}</span>
           <div className="min-w-0"><div className="flex items-center gap-2"><p className="truncate text-xs font-semibold uppercase tracking-[.08em] text-emerald-700 dark:text-emerald-300">{subtitle}</p>{programType === "hybrid" && <span className="rounded-full bg-lavender-soft px-2 py-0.5 text-[10px] font-bold text-violet-700 dark:text-violet-200">HYBRID</span>}</div><h3 className="mt-1 truncate text-lg font-semibold tracking-tight">{name}</h3></div>
         </div>
         <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white/70 text-emerald-700 shadow-sm transition group-hover:translate-x-0.5 dark:bg-white/10 dark:text-emerald-300"><ArrowUpRight className="size-4"/></span>

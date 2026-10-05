@@ -10,9 +10,9 @@ export const messages = {
       back: "ย้อนกลับ", settings: "การตั้งค่า",
     },
     landing: {
-      eyebrow: "วอลเล็ตสะสมแต้มสำหรับทุกคน",
-      title: "ทุกแต้มของคุณ เก็บไว้ที่เดียว",
-      description: "สร้าง เข้าร่วม สแกน สะสม และแลกรางวัลได้ในบัญชีเดียว ใช้ได้ทั้งลูกค้า เพื่อน ชุมชน และธุรกิจ",
+      eyebrow: "Collect · Reward · Go Further",
+      title: "ทุกการแวะมา ได้มากกว่าเดิม",
+      description: "สะสมแต้ม เติมสแตมป์ และปลดล็อกรางวัลจากร้านที่คุณชอบ ทั้งหมดใน PumpPoint",
       openDemo: "เปิดแอป", createProgram: "สร้างโปรแกรม",
       pointTitle: "แต้ม", pointCopy: "รวมยอดแต้มจากทุกโปรแกรมไว้ในที่เดียว",
       stampTitle: "สแตมป์", stampCopy: "บัตรสแตมป์ดิจิทัลที่รองรับหลายรอบและรางวัล",
@@ -41,16 +41,16 @@ export const messages = {
     },
     scan: {
       title: "สแกน",
-      description: "เปิด QR ของ KeptPoint ด้วยกล้อง หรือวางโทเค็นแบบใช้ครั้งเดียว ระบบจะตรวจสอบการกระทำ สิทธิ์ผู้สร้าง วันหมดอายุ และการใช้ซ้ำจากฝั่งเซิร์ฟเวอร์",
+      description: "เปิด QR ของ PumpPoint ด้วยกล้อง หรือวางโทเค็นแบบใช้ครั้งเดียว ระบบจะตรวจสอบการกระทำ สิทธิ์ผู้สร้าง วันหมดอายุ และการใช้ซ้ำจากฝั่งเซิร์ฟเวอร์",
       cameraHint: "โครงสร้าง QR พร้อมใช้งานกับตัวสแกนกล้องในแอปโดยไม่ต้องเปลี่ยนโปรโตคอล",
       paste: "วาง QR token", accept: "ยืนยัน QR",
       security: "QR ที่มีความละเอียดอ่อนจะหมดอายุภายใน 15–600 วินาที ค่าเริ่มต้นคือ 90 วินาทีและใช้ได้เพียงครั้งเดียว",
     },
     profile: {
-      fallbackName: "ผู้ใช้ KeptPoint", myQr: "QR ของฉัน", myPrograms: "โปรแกรมของฉัน", settings: "การตั้งค่า",
+      fallbackName: "ผู้ใช้ PumpPoint", myQr: "QR ของฉัน", myPrograms: "โปรแกรมของฉัน", settings: "การตั้งค่า",
     },
     settings: {
-      title: "การตั้งค่า", description: "ปรับภาษาและรูปแบบการแสดงผลของ KeptPoint ให้เหมาะกับคุณ",
+      title: "การตั้งค่า", description: "ปรับภาษาและรูปแบบการแสดงผลของ PumpPoint ให้เหมาะกับคุณ",
       language: "ภาษา", thaiDescription: "ใช้ภาษาไทยทั่วทั้งแอป", englishDescription: "Use English across the app",
       theme: "ธีม", system: "ตามระบบ", light: "สว่าง", dark: "มืด",
       systemDescription: "เปลี่ยนตามโหมดของอุปกรณ์โดยอัตโนมัติ", lightDescription: "ใช้พื้นหลังสว่างตลอดเวลา", darkDescription: "ใช้พื้นหลังมืดตลอดเวลา",
@@ -64,9 +64,9 @@ export const messages = {
       descriptionPlaceholder: "สะสมรางวัลได้ทุกครั้งที่มาใช้บริการ", create: "สร้างโปรแกรม",
     },
     program: {
-      notFound: "ไม่พบโปรแกรมหรือโปรแกรมไม่พร้อมใช้งาน", fallbackDescription: "โปรแกรมสะสมแต้มบน KeptPoint",
+      notFound: "ไม่พบโปรแกรมหรือโปรแกรมไม่พร้อมใช้งาน", fallbackDescription: "โปรแกรมสะสมแต้มบน PumpPoint",
       available: "ใช้ได้", stampCard: "บัตรสแตมป์", active: "ใช้งานอยู่", join: "เข้าร่วมโปรแกรมนี้",
-      rewards: "รางวัล", noRewards: "ยังไม่มีรางวัล", redeem: "แลกรางวัล", scan: "สแกน KeptPoint QR",
+      rewards: "รางวัล", noRewards: "ยังไม่มีรางวัล", redeem: "แลกรางวัล", scan: "สแกน PumpPoint QR",
       manual: "กำหนดเอง", left: "คงเหลือ",
     },
     manage: {
@@ -93,9 +93,9 @@ export const messages = {
       back: "Back", settings: "Settings",
     },
     landing: {
-      eyebrow: "Universal loyalty wallet",
-      title: "Your points, kept.",
-      description: "Create, join, scan, collect and redeem. One account works for customers, friends, communities and businesses.",
+      eyebrow: "Collect · Reward · Go Further",
+      title: "Every visit earns more.",
+      description: "Collect points, complete stamp cards, and unlock rewards from the places you love — all in PumpPoint.",
       openDemo: "Open app", createProgram: "Create a program",
       pointTitle: "Points", pointCopy: "Collect balances from every program in one place.",
       stampTitle: "Stamps", stampCopy: "Digital cards with rounds and rewards.",
@@ -123,13 +123,13 @@ export const messages = {
     },
     scan: {
       title: "Scan",
-      description: "Open a KeptPoint QR with your device camera or paste its one-time token here. The server validates the action, creator permission, expiry and replay state.",
+      description: "Open a PumpPoint QR with your device camera or paste its one-time token here. The server validates the action, creator permission, expiry and replay state.",
       cameraHint: "The QR protocol is ready for an in-app camera scanner without changing the token format.",
       paste: "Paste QR token", accept: "Accept QR",
       security: "Sensitive QR sessions expire in 15–600 seconds; the default generated session lasts 90 seconds and can be consumed once.",
     },
     profile: {
-      fallbackName: "KeptPoint User", myQr: "My KeptPoint QR", myPrograms: "My programs", settings: "Settings",
+      fallbackName: "PumpPoint User", myQr: "My PumpPoint QR", myPrograms: "My programs", settings: "Settings",
     },
     settings: {
       title: "Settings", description: "Choose the language and appearance that work best for you.",
@@ -146,9 +146,9 @@ export const messages = {
       descriptionPlaceholder: "Earn rewards every visit.", create: "Create program",
     },
     program: {
-      notFound: "Program not found or unavailable.", fallbackDescription: "A KeptPoint loyalty program.",
+      notFound: "Program not found or unavailable.", fallbackDescription: "A PumpPoint loyalty program.",
       available: "Available", stampCard: "Stamp card", active: "active", join: "Join this program",
-      rewards: "Rewards", noRewards: "No rewards yet.", redeem: "Redeem", scan: "Scan KeptPoint QR",
+      rewards: "Rewards", noRewards: "No rewards yet.", redeem: "Redeem", scan: "Scan PumpPoint QR",
       manual: "Manual", left: "left",
     },
     manage: {

@@ -26,7 +26,7 @@
 
 ## Supabase development database
 
-Project: `gabdlrfoizyfhajyqlvv` (KeptPoint, ap-southeast-1)
+Project: `gabdlrfoizyfhajyqlvv` (PumpPoint, ap-southeast-1)
 
 Applied migrations:
 

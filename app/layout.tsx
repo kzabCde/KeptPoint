@@ -3,13 +3,13 @@ import { getPreferences } from "@/lib/preferences";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "KeptPoint", template: "%s · KeptPoint" },
-  description: "Keep every point, stamp and reward together.",
-  applicationName: "KeptPoint",
+  title: { default: "PumpPoint", template: "%s · PumpPoint" },
+  description: "Collect points, earn rewards, and go further with every visit.",
+  applicationName: "PumpPoint",
   icons: {
-    icon: [{ url: "/keptpoint-mark.webp", type: "image/webp" }],
-    shortcut: "/keptpoint-mark.webp",
-    apple: [{ url: "/keptpoint-mark.webp", type: "image/webp" }],
+    icon: [{ url: "/pumppoint-mark.svg", type: "image/svg+xml" }],
+    shortcut: "/pumppoint-mark.svg",
+    apple: [{ url: "/pumppoint-mark.svg", type: "image/svg+xml" }],
   },
 };
 
@@ -17,7 +17,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#063c35",
+  themeColor: "#0F2D46",
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

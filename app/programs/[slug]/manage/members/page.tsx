@@ -24,7 +24,7 @@ export default async function MembersPage({ params, searchParams }: { params: Pr
   const canStamps = program.program_type === "stamps" || program.program_type === "hybrid";
 
   return (
-    <main className="mx-auto min-h-dvh max-w-xl overflow-x-hidden px-5 py-6">
+    <main className="mx-auto min-h-dvh max-w-5xl overflow-x-hidden px-5 py-6 lg:px-8 lg:py-8">
       <Link href={`/programs/${slug}/manage`} aria-label={th ? "กลับหน้าจัดการ" : "Back to manage"} className="cute-icon-button"><ArrowLeft className="size-4"/></Link>
       <div className="mt-6 flex items-start justify-between gap-4"><div><p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">{program.name}</p><h1 className="mt-1 text-3xl font-semibold tracking-[-0.045em]">{th ? "สมาชิก" : "Members"}</h1><p className="mt-2 text-sm text-zinc-500">{(members ?? []).length} {th ? "สมาชิกที่พบ" : "members"}</p></div><span className="grid size-12 place-items-center rounded-[18px] bg-mint-soft text-emerald-700 dark:text-emerald-200"><UsersRound className="size-6"/></span></div>
 
@@ -32,7 +32,7 @@ export default async function MembersPage({ params, searchParams }: { params: Pr
 
       <form className="mt-5 flex min-w-0 gap-2"><label className="cute-input flex h-12 min-w-0 flex-1 items-center gap-3 px-4"><Search className="size-4 shrink-0 text-zinc-400"/><input name="q" defaultValue={q} placeholder={th ? "ค้นหาชื่อหรือ Username" : "Search name or username"} className="min-w-0 flex-1 bg-transparent text-sm outline-none"/></label><button className="cute-primary shrink-0 rounded-2xl px-4 text-sm font-semibold">{th ? "ค้นหา" : "Search"}</button></form>
 
-      <div className="mt-6 grid gap-4">
+      <div className="mt-6 grid gap-4 xl:grid-cols-2">
         {visibleMembers.length === 0 && <div className="cute-card p-7 text-center shadow-none"><UsersRound className="mx-auto size-8 text-zinc-400"/><h2 className="mt-3 font-semibold">{th ? "ยังไม่พบสมาชิก" : "No members found"}</h2><p className="mt-2 text-sm text-zinc-500">{normalized ? (th ? "ลองค้นหาด้วยชื่ออื่น" : "Try another search.") : (th ? "เมื่อมีคนเข้าร่วมโปรแกรม รายชื่อจะมาอยู่ตรงนี้" : "Members will appear here after joining the program.")}</p></div>}
         {visibleMembers.map((member) => <section key={member.user_id} className="cute-card min-w-0 p-4 shadow-none">
           <div className="flex min-w-0 items-start justify-between gap-3"><div className="flex min-w-0 items-center gap-3"><span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-lavender-soft font-bold text-violet-700 dark:text-violet-200">{member.display_name.slice(0,1).toUpperCase()}</span><div className="min-w-0"><p className="truncate font-semibold">{member.display_name}</p><p className="truncate text-xs text-zinc-500">{member.username ? `@${member.username}` : (th ? "ยังไม่มี Username" : "No username")}</p></div></div><span className="soft-chip shrink-0">{member.member_status}</span></div>

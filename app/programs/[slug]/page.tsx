@@ -16,7 +16,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   const { data: program } = await supabase.from("programs").select("id,owner_id,name,description,program_type,currency_name").eq("slug", slug).maybeSingle();
-  if (!program) return <main className="mx-auto max-w-xl p-6">{m.notFound}</main>;
+  if (!program) return <main className="mx-auto max-w-5xl p-6">{m.notFound}</main>;
 
   const userId = auth.user?.id;
   const [memberResult, accountResult, stampResult, rewardsResult, redemptionsResult] = await Promise.all([
@@ -40,14 +40,14 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
   const remainingStamps = requiredStamps ? Math.max(0, requiredStamps - stampCount) : null;
 
   return (
-    <main className="mx-auto min-h-dvh max-w-xl px-5 py-6">
+    <main className="mx-auto min-h-dvh max-w-5xl px-5 py-6 sm:px-8 lg:py-10">
       <div className="flex items-center justify-between gap-3">
         <Link href="/wallet" aria-label={th ? "กลับวอลเล็ต" : "Back to wallet"} className="cute-icon-button"><ArrowLeft className="size-4"/></Link>
         {canManage && <Link href={`/programs/${slug}/manage`} className="cute-secondary inline-flex min-h-11 items-center gap-2 rounded-2xl px-4 text-sm font-semibold"><Settings2 className="size-4"/>{c.manage}</Link>}
       </div>
 
-      <section className="loyalty-card mt-7 p-6">
-        <div className="flex items-start gap-4"><div className="grid size-16 shrink-0 place-items-center rounded-[22px] bg-[#073f38] text-2xl font-bold text-white shadow-lg shadow-emerald-950/10">{program.name.slice(0,1).toUpperCase()}</div><div className="min-w-0"><p className="text-xs font-bold uppercase tracking-[.1em] text-emerald-700 dark:text-emerald-300">{program.program_type}</p><h1 className="mt-1 break-words text-3xl font-semibold tracking-[-0.045em]">{program.name}</h1><p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{program.description || m.fallbackDescription}</p></div></div>
+      <section className="loyalty-card mt-7 p-6 lg:p-8">
+        <div className="flex items-start gap-4"><div className="grid size-16 shrink-0 place-items-center rounded-[22px] bg-[#0F2D46] text-2xl font-bold text-white shadow-lg shadow-emerald-950/10">{program.name.slice(0,1).toUpperCase()}</div><div className="min-w-0"><p className="text-xs font-bold uppercase tracking-[.1em] text-emerald-700 dark:text-emerald-300">{program.program_type}</p><h1 className="mt-1 break-words text-3xl font-semibold tracking-[-0.045em]">{program.name}</h1><p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{program.description || m.fallbackDescription}</p></div></div>
 
         {member?.status === "active" ? (
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -61,7 +61,7 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
 
       <section className="mt-8">
         <div className="flex items-center justify-between gap-3"><div><div className="flex items-center gap-2 text-sm font-bold text-amber-700 dark:text-amber-300"><Sparkles className="size-4"/>{th ? "ของดีที่รออยู่" : "Something to look forward to"}</div><h2 className="mt-1 text-2xl font-semibold tracking-[-0.04em]">{m.rewards}</h2></div><span className="grid size-12 place-items-center rounded-[18px] bg-reward-soft text-amber-700 dark:text-amber-200"><Gift className="size-6"/></span></div>
-        <div className="mt-4 grid gap-3">
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
           {rewards.length === 0 && <div className="cute-card p-6 text-center shadow-none"><Gift className="mx-auto size-7 text-amber-500"/><p className="mt-3 font-semibold">{m.noRewards}</p><p className="mt-1 text-sm text-zinc-500">{th ? "ร้านยังไม่ได้เพิ่มรางวัล กลับมาเช็กอีกทีนะ" : "This program has not added rewards yet. Check back soon."}</p></div>}
           {rewards.map((reward) => {
             const pending = redemptions.some((r) => r.reward_id === reward.id && (r.status === "pending" || r.status === "reserved"));
