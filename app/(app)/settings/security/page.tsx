@@ -33,7 +33,7 @@ export default async function SecurityPage({ searchParams }: { searchParams: Pro
       <div className="mt-6">
         <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">{th ? "บัญชีของฉัน" : "My account"}</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-[-0.045em]">{th ? "ความปลอดภัย" : "Security"}</h1>
-        <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{th ? "จัดการรหัสผ่านและสถานะการยืนยันอีเมลของ KeptPoint" : "Manage your password and KeptPoint email verification status."}</p>
+        <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{th ? "จัดการรหัสผ่านและสถานะการยืนยันอีเมลของ PumpPoint" : "Manage your password and PumpPoint email verification status."}</p>
       </div>
 
       <section className="cute-card mt-6 p-5">
@@ -42,7 +42,7 @@ export default async function SecurityPage({ searchParams }: { searchParams: Pro
           <div className="min-w-0 flex-1"><p className="text-xs font-medium text-zinc-500">{th ? "อีเมลบัญชี" : "Account email"}</p><p className="mt-1 break-all font-semibold">{auth.user.email}</p></div>
           <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${verified ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-200" : "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200"}`}><BadgeCheck className="size-3.5"/>{verified ? (th ? "ยืนยันแล้ว" : "Verified") : (th ? "รอยืนยัน" : "Pending")}</span>
         </div>
-        <div className="mt-4 flex items-center gap-3 rounded-2xl bg-zinc-50 px-4 py-3 dark:bg-white/5"><ShieldCheck className="size-5 text-emerald-600"/><p className="text-sm text-zinc-600 dark:text-zinc-300">{th ? "บัญชี KeptPoint ใช้ Email + Password สำหรับการเข้าสู่ระบบปกติ ลิงก์อีเมลใช้เฉพาะการยืนยันบัญชีใหม่และการกู้รหัสผ่าน" : "KeptPoint uses Email + Password for normal sign-in. Email links are only for new-account verification and password recovery."}</p></div>
+        <div className="mt-4 flex items-center gap-3 rounded-2xl bg-zinc-50 px-4 py-3 dark:bg-white/5"><ShieldCheck className="size-5 text-emerald-600"/><p className="text-sm text-zinc-600 dark:text-zinc-300">{th ? "บัญชี PumpPoint ใช้ Email + Password สำหรับการเข้าสู่ระบบปกติ ลิงก์อีเมลใช้เฉพาะการยืนยันบัญชีใหม่และการกู้รหัสผ่าน" : "PumpPoint uses Email + Password for normal sign-in. Email links are only for new-account verification and password recovery."}</p></div>
       </section>
 
       {status === "password-changed" && <p className="mt-5 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 dark:bg-emerald-950/35 dark:text-emerald-200">{th ? "เปลี่ยนรหัสผ่านเรียบร้อยแล้ว" : "Password changed successfully."}</p>}

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { BottomNav } from "@/components/bottom-nav";
+import { AppShell } from "@/components/app-shell";
 import { getLocale } from "@/lib/preferences";
 import { createClient } from "@/lib/supabase/server";
 
@@ -8,18 +8,18 @@ export default async function AppLayout({ children }: Readonly<{ children: React
   const { data } = await supabase.auth.getUser();
   if (!data.user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("username")
-    .eq("id", data.user.id)
-    .maybeSingle();
+  const [{ data: profile }, unread] = await Promise.all([
+    supabase.from("profiles").select("username,display_name").eq("id", data.user.id).maybeSingle(),
+    supabase.from("notifications").select("id", { count: "exact", head: true }).eq("user_id", data.user.id).is("read_at", null),
+  ]);
 
   if (!profile?.username) redirect("/onboarding");
 
+  const displayName = profile.display_name?.trim() || profile.username || data.user.email?.split("@")[0] || "PumpPoint member";
+
   return (
-    <div className="app-shell mx-auto min-h-dvh max-w-xl border-x border-emerald-950/5 pb-28 dark:border-white/5">
+    <AppShell locale={locale} displayName={displayName} unread={unread.count ?? 0}>
       {children}
-      <BottomNav locale={locale} />
-    </div>
+    </AppShell>
   );
 }

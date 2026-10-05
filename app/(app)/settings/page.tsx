@@ -15,9 +15,9 @@ export default async function SettingsPage() {
   ] as const;
 
   return (
-    <main className="min-w-0 px-5 py-6">
+    <main className="page-wrap min-w-0">
       <Link href="/profile" aria-label={th ? "กลับโปรไฟล์" : "Back to profile"} className="cute-icon-button"><ArrowLeft className="size-4"/></Link>
-      <div className="mt-6"><p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">KeptPoint</p><h1 className="mt-1 text-3xl font-semibold tracking-[-0.045em]">{m.title}</h1><p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{m.description}</p></div>
+      <div className="mt-6"><p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">PumpPoint</p><h1 className="mt-1 text-3xl font-semibold tracking-[-0.045em]">{m.title}</h1><p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{m.description}</p></div>
 
       <section className="mt-6 grid gap-3">
         {links.map(([Icon,title,copy,href,tone]) => <Link key={href} href={href} className="cute-card flex min-w-0 items-center gap-3 p-4 shadow-none"><span className={`grid size-11 shrink-0 place-items-center rounded-2xl ${tone}`}><Icon className="size-5"/></span><div className="min-w-0 flex-1"><p className="font-semibold">{title}</p><p className="mt-0.5 break-words text-xs leading-5 text-zinc-500">{copy}</p></div><ChevronRight className="size-4 shrink-0 text-zinc-400"/></Link>)}
@@ -29,7 +29,7 @@ export default async function SettingsPage() {
       </section>
 
       <section className="mt-7 cute-card p-5 shadow-none">
-        <div className="flex items-start gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-coral-soft text-rose-600 dark:text-rose-200"><Info className="size-5"/></span><div><h2 className="font-semibold">{th ? "เกี่ยวกับ KeptPoint" : "About KeptPoint"}</h2><p className="mt-1 text-sm leading-6 text-zinc-500">{th ? "เก็บทุกแต้ม ทุกสแตมป์ และทุกความคุ้มค่าไว้ด้วยกัน" : "Keep every point, stamp and reward together."}</p><p className="mt-2 text-xs font-semibold text-zinc-400">v0.1.4</p></div></div>
+        <div className="flex items-start gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-coral-soft text-rose-600 dark:text-rose-200"><Info className="size-5"/></span><div><h2 className="font-semibold">{th ? "เกี่ยวกับ PumpPoint" : "About PumpPoint"}</h2><p className="mt-1 text-sm leading-6 text-zinc-500">{th ? "เก็บทุกแต้ม ทุกสแตมป์ และทุกความคุ้มค่าไว้ด้วยกัน" : "Keep every point, stamp and reward together."}</p><p className="mt-2 text-xs font-semibold text-zinc-400">v0.1.4</p></div></div>
       </section>
 
       <div className="mt-4 flex gap-3 rounded-[20px] bg-mint-soft p-4 text-sm text-emerald-900 dark:text-emerald-100"><ShieldCheck className="mt-0.5 size-5 shrink-0"/><p className="leading-6">{m.syncNote}</p></div>

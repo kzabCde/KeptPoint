@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Coins, Gift, History, Sparkles, UsersRound } from "lucide-react";
+import { ArrowLeft, Coins, Gift, History, QrCode, Sparkles, UsersRound } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale } from "@/lib/preferences";
 import { messages } from "@/lib/i18n";
@@ -25,22 +25,23 @@ export default async function ManageProgramPage({ params }: { params: Promise<{ 
   const links = [
     [UsersRound, m.members, th ? "ค้นหาสมาชิกและออกแต้ม/สแตมป์" : "Search members and issue points/stamps", `/programs/${slug}/manage/members`, "bg-mint-soft text-emerald-700 dark:text-emerald-200"],
     [Gift, m.rewards, m.rewardsCopy, `/programs/${slug}/manage/rewards`, "bg-reward-soft text-amber-700 dark:text-amber-200"],
+    [QrCode, th ? "QR / Scanner" : "QR / Scanner", th ? "สร้าง QR สำหรับแต้ม สแตมป์ และเข้าร่วม" : "Generate secure codes for points, stamps, and joining", `/programs/${slug}/manage/qr`, "bg-lavender-soft text-blue-600 dark:text-blue-200"],
     [History, m.redemptions, m.redemptionsCopy, `/programs/${slug}/manage/redemptions`, "bg-lavender-soft text-violet-700 dark:text-violet-200"],
   ] as const;
 
   return (
-    <main className="mx-auto min-h-dvh max-w-xl overflow-x-hidden px-5 py-6">
+    <main className="mx-auto min-h-dvh max-w-5xl overflow-x-hidden px-5 py-6 lg:px-8 lg:py-8">
       <Link href={`/programs/${slug}`} aria-label={th ? "กลับหน้าโปรแกรม" : "Back to program"} className="cute-icon-button"><ArrowLeft className="size-4"/></Link>
-      <div className="mt-6 flex items-start justify-between gap-4"><div><div className="flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-300"><Sparkles className="size-4"/>{m.eyebrow}</div><h1 className="mt-1 break-words text-3xl font-semibold tracking-[-0.045em]">{program.name}</h1><p className="mt-2 text-sm text-zinc-500">{program.program_type}</p></div><span className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-[#073f38] text-lg font-bold text-white">{program.name.slice(0,1).toUpperCase()}</span></div>
+      <div className="mt-6 flex items-start justify-between gap-4"><div><div className="flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-300"><Sparkles className="size-4"/>{m.eyebrow}</div><h1 className="mt-1 break-words text-3xl font-semibold tracking-[-0.045em]">{program.name}</h1><p className="mt-2 text-sm text-zinc-500">{program.program_type}</p></div><span className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-[#0F2D46] text-lg font-bold text-white">{program.name.slice(0,1).toUpperCase()}</span></div>
 
-      <section className="mt-6 grid grid-cols-2 gap-3">
+      <section className="mt-6 grid grid-cols-2 gap-3 xl:grid-cols-4">
         <div className="cute-card p-4 shadow-none"><UsersRound className="size-5 text-emerald-600"/><p className="mt-4 text-2xl font-semibold">{members.count ?? 0}</p><p className="mt-1 text-xs text-zinc-500">{th ? "สมาชิกที่ใช้งาน" : "Active members"}</p></div>
         <div className="cute-card p-4 shadow-none"><Coins className="size-5 text-violet-600"/><p className="mt-4 truncate text-2xl font-semibold">{totalIssued.toLocaleString(th ? "th-TH" : "en-US")}</p><p className="mt-1 text-xs text-zinc-500">{th ? `แจก ${program.currency_name} แล้ว` : `${program.currency_name} issued`}</p></div>
         <div className="cute-card p-4 shadow-none"><Gift className="size-5 text-amber-600"/><p className="mt-4 text-2xl font-semibold">{rewards.count ?? 0}</p><p className="mt-1 text-xs text-zinc-500">{th ? "รางวัลที่เปิดใช้" : "Active rewards"}</p></div>
         <div className="cute-card p-4 shadow-none"><History className="size-5 text-rose-500"/><p className="mt-4 text-2xl font-semibold">{pending.count ?? 0}</p><p className="mt-1 text-xs text-zinc-500">{th ? "รอยืนยันการแลก" : "Pending redemptions"}</p></div>
       </section>
 
-      <div className="mt-7 grid gap-3">{links.map(([Icon,title,copy,href,tone]) => <Link key={title} href={href} className="cute-card flex min-w-0 items-center gap-4 p-4 shadow-none"><span className={`grid size-11 shrink-0 place-items-center rounded-2xl ${tone}`}><Icon className="size-5"/></span><div className="min-w-0 flex-1"><p className="font-semibold">{title}</p><p className="mt-1 break-words text-xs leading-5 text-zinc-500">{copy}</p></div><span className="text-lg text-zinc-400">›</span></Link>)}</div>
+      <div className="mt-7 grid gap-3 md:grid-cols-2">{links.map(([Icon,title,copy,href,tone]) => <Link key={title} href={href} className="cute-card flex min-w-0 items-center gap-4 p-4 shadow-none"><span className={`grid size-11 shrink-0 place-items-center rounded-2xl ${tone}`}><Icon className="size-5"/></span><div className="min-w-0 flex-1"><p className="font-semibold">{title}</p><p className="mt-1 break-words text-xs leading-5 text-zinc-500">{copy}</p></div><span className="text-lg text-zinc-400">›</span></Link>)}</div>
 
       <section className="mt-8">
         <h2 className="section-title">{th ? "กิจกรรมล่าสุด" : "Recent activity"}</h2>

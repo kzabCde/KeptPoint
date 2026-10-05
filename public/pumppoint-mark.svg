@@ -1,0 +1,13 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pump" x1="54" y1="42" x2="186" y2="220" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10C9A7"/>
+      <stop offset=".52" stop-color="#10C9A7"/>
+      <stop offset="1" stop-color="#3B82F6"/>
+    </linearGradient>
+  </defs>
+  <path d="M62 209V111c0-42 27-70 68-70 38 0 65 24 65 59 0 38-28 61-70 61h-21" stroke="url(#pump)" stroke-width="31" stroke-linecap="round"/>
+  <path d="M104 118c0-12 9-22 21-22h28" stroke="#fff" stroke-width="20" stroke-linecap="round"/>
+  <path d="m135 77 7.2 14.5 16 2.3-11.6 11.3 2.8 15.9-14.4-7.5-14.4 7.5 2.8-15.9-11.6-11.3 16-2.3L135 77Z" fill="#0F9E93"/>
+  <path d="M82 30 70 16M119 23V7M155 30l12-14" stroke="#FBBF24" stroke-width="12" stroke-linecap="round"/>
+</svg>

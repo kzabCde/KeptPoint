@@ -2,18 +2,18 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "KeptPoint",
-    short_name: "KeptPoint",
-    description: "Keep every point, stamp and reward together.",
+    name: "PumpPoint",
+    short_name: "PumpPoint",
+    description: "Collect points, earn rewards, and go further with every visit.",
     start_url: "/home",
     display: "standalone",
-    background_color: "#f7faf8",
-    theme_color: "#063c35",
+    background_color: "#F7F9FC",
+    theme_color: "#0F2D46",
     icons: [
       {
-        src: "/keptpoint-mark.webp",
+        src: "/pumppoint-mark.svg",
         sizes: "256x256",
-        type: "image/webp",
+        type: "image/svg+xml",
         purpose: "any",
       },
     ],

@@ -46,7 +46,7 @@ export default async function WalletPage({ searchParams }: { searchParams: Promi
   const filters = [["all", c.all], ["points", m.points], ["stamps", m.stamps], ["hybrid", th ? "ไฮบริด" : "Hybrid"]] as const;
 
   return (
-    <main className="min-w-0 px-5 py-6">
+    <main className="page-wrap min-w-0">
       <div className="flex items-start justify-between gap-4">
         <div><div className="flex items-center gap-2 text-xs font-bold text-violet-700 dark:text-violet-200"><Sparkles className="size-4"/>{th ? "การ์ดสะสมของคุณ" : "Your loyalty collection"}</div><h1 className="mt-1 text-3xl font-semibold tracking-[-0.045em]">{m.title}</h1><p className="mt-2 text-sm leading-6 text-zinc-500">{th ? "เก็บแต้ม สแตมป์ และรางวัลจากทุกโปรแกรมไว้ในที่เดียว" : "Keep points, stamps and rewards from every program in one place."}</p></div>
         <span className="grid size-12 shrink-0 place-items-center rounded-[18px] bg-reward-soft text-amber-700 dark:text-amber-200"><Gift className="size-6"/></span>
@@ -59,7 +59,7 @@ export default async function WalletPage({ searchParams }: { searchParams: Promi
       </form>
 
       <div className="mt-4 flex max-w-full gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {filters.map(([value,label]) => <Link key={value} href={`/wallet?type=${value}&q=${encodeURIComponent(q)}`} className={type === value ? "soft-chip shrink-0 border-transparent bg-[#073f38] text-white dark:bg-emerald-300 dark:text-emerald-950" : "soft-chip shrink-0"}>{label}</Link>)}
+        {filters.map(([value,label]) => <Link key={value} href={`/wallet?type=${value}&q=${encodeURIComponent(q)}`} className={type === value ? "soft-chip shrink-0 border-transparent bg-[#0F2D46] text-white dark:bg-emerald-300 dark:text-emerald-950" : "soft-chip shrink-0"}>{label}</Link>)}
       </div>
 
       <div className="mt-5 grid min-w-0 gap-3">

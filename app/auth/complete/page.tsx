@@ -96,7 +96,7 @@ export default function AuthCompletePage() {
       cleanUrl.searchParams.set("next", next);
       window.history.replaceState(null, "", cleanUrl.toString());
 
-      if (active) setMessage("ยืนยันสำเร็จ กำลังพาเข้าสู่ KeptPoint…");
+      if (active) setMessage("ยืนยันสำเร็จ กำลังพาเข้าสู่ PumpPoint…");
       window.location.replace(`/auth/finalize?next=${encodeURIComponent(next)}`);
     }
 

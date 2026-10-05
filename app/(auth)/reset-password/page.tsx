@@ -31,7 +31,7 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
         <section className="cute-card mt-7 p-6 sm:p-7">
           <div className="grid size-14 place-items-center rounded-[20px] bg-lavender-soft text-violet-700 dark:text-violet-200"><KeyRound className="size-7"/></div>
           <h1 className="mt-5 text-3xl font-semibold tracking-[-0.045em]">{th ? "ตั้งรหัสผ่านใหม่" : "Choose a new password"}</h1>
-          <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{th ? "ลิงก์กู้คืนได้รับการยืนยันแล้ว ตั้งรหัสผ่านใหม่เพื่อกลับเข้า KeptPoint" : "Your recovery link is verified. Set a new password to get back into KeptPoint."}</p>
+          <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{th ? "ลิงก์กู้คืนได้รับการยืนยันแล้ว ตั้งรหัสผ่านใหม่เพื่อกลับเข้า PumpPoint" : "Your recovery link is verified. Set a new password to get back into PumpPoint."}</p>
           <div className="mt-5 flex gap-2 rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/35 dark:text-emerald-200"><ShieldCheck className="mt-0.5 size-4 shrink-0"/><p>{th ? "รหัสผ่านใหม่ต้องต่างจากรหัสผ่านเดิม หลังบันทึกจะใช้รหัสใหม่นี้เข้าสู่ระบบได้ทันที" : "The new password must differ from the old one. After saving, use the new password to sign in."}</p></div>
           {error && <p role="alert" className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{errorText[error][locale]}</p>}
           <form action={resetPassword} className="mt-6 grid gap-5">
