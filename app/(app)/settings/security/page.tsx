@@ -11,6 +11,8 @@ export const metadata = { title: "Security" };
 
 const errorText = {
   "invalid-password": { th: "กรุณาตรวจรหัสผ่านใหม่อีกครั้ง", en: "Check the new password and try again." },
+  "password-same": { th: "รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิม", en: "Your new password must be different from your current password." },
+  "password-weak": { th: "รหัสผ่านใหม่ยังไม่ผ่านข้อกำหนดความปลอดภัย กรุณาใช้รหัสผ่านที่คาดเดายากขึ้น", en: "The new password does not meet the security requirements. Choose a stronger password." },
   "password-update-failed": { th: "เปลี่ยนรหัสผ่านไม่สำเร็จ กรุณาลองใหม่", en: "Could not change the password. Please try again." },
   "profile-update-failed": { th: "เปลี่ยนรหัสผ่านแล้ว แต่สถานะบัญชียังอัปเดตไม่ครบ", en: "The password changed, but account state could not be fully updated." },
 } as const;
@@ -47,7 +49,7 @@ export default async function SecurityPage({ searchParams }: { searchParams: Pro
       {error && <p role="alert" className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{errorText[error][locale]}</p>}
 
       <section className="cute-card mt-5 p-5">
-        <div className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-2xl bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-200"><KeyRound className="size-5"/></span><div><h2 className="font-semibold">{th ? "เปลี่ยนรหัสผ่าน" : "Change password"}</h2><p className="mt-0.5 text-xs text-zinc-500">{th ? "ตั้งรหัสผ่านใหม่สำหรับการเข้าสู่ระบบครั้งถัดไป" : "Choose a new password for your next sign-in."}</p></div></div>
+        <div className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-2xl bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-200"><KeyRound className="size-5"/></span><div><h2 className="font-semibold">{th ? "เปลี่ยนรหัสผ่าน" : "Change password"}</h2><p className="mt-0.5 text-xs text-zinc-500">{th ? "ตั้งรหัสผ่านใหม่ที่ต่างจากรหัสเดิมสำหรับการเข้าสู่ระบบครั้งถัดไป" : "Choose a new password that differs from your current password."}</p></div></div>
         <form action={changePassword} className="mt-5 grid gap-5">
           <PasswordFields locale={locale}/>
           <button className="cute-primary h-12 rounded-2xl font-semibold">{th ? "เปลี่ยนรหัสผ่าน" : "Change password"}</button>

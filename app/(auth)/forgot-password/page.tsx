@@ -26,6 +26,8 @@ export default async function ForgotPasswordPage({ searchParams }: { searchParam
               <div className="flex gap-2"><ShieldCheck className="mt-0.5 size-4 shrink-0"/><p>{th ? "หากมีบัญชีที่ใช้อีเมลนี้ เราได้ส่งลิงก์สำหรับตั้งรหัสผ่านใหม่แล้ว กรุณาตรวจกล่องข้อความและสแปม" : "If an account uses this email, a password reset link has been sent. Check your inbox and spam folder."}</p></div>
             </div>
           )}
+          {status === "session-required" && <p role="alert" className="mt-5 rounded-2xl bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800 dark:bg-amber-950/30 dark:text-amber-200">{th ? "ลิงก์รีเซ็ตยังไม่ได้สร้าง session กรุณาเปิดลิงก์ล่าสุดจากอีเมลอีกครั้ง หรือส่งลิงก์ใหม่" : "The reset link did not establish a recovery session. Open the latest email link again or request a new one."}</p>}
+          {error === "recovery-link-invalid" && <p role="alert" className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{th ? "ลิงก์รีเซ็ตรหัสผ่านไม่ถูกต้อง หมดอายุ หรือถูกใช้แล้ว กรุณาส่งลิงก์ใหม่" : "The reset link is invalid, expired, or already used. Request a new reset link."}</p>}
           {error === "email-rate-limit" && <p role="alert" className="mt-5 rounded-2xl bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800 dark:bg-amber-950/30 dark:text-amber-200">{th ? "ระบบส่งอีเมลถึงขีดจำกัดชั่วคราว กรุณารอสักครู่แล้วลองใหม่" : "Email sending is temporarily rate-limited. Please wait and try again."}</p>}
           {error === "email-required" && <p role="alert" className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{th ? "กรุณากรอกอีเมล" : "Enter your email."}</p>}
 

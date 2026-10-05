@@ -77,7 +77,7 @@ export async function signUpWithEmail(formData: FormData) {
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      emailRedirectTo: `${origin}/auth/confirm?next=/home`,
+      emailRedirectTo: `${origin}/auth/complete?next=/home`,
       data: { desired_username: parsed.data.username },
     },
   });
@@ -100,7 +100,7 @@ export async function resendConfirmation(formData: FormData) {
     type: "signup",
     email,
     options: {
-      emailRedirectTo: `${origin}/auth/confirm?next=/home`,
+      emailRedirectTo: `${origin}/auth/complete?next=/home`,
     },
   });
 
@@ -118,7 +118,7 @@ export async function requestPasswordReset(formData: FormData) {
   const origin = await appOrigin();
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/confirm?next=/reset-password`,
+    redirectTo: `${origin}/auth/complete?next=/reset-password`,
   });
 
   if (error && isEmailSendRateLimit(error)) {
