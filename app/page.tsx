@@ -16,6 +16,7 @@ import {
   Zap,
 } from "lucide-react";
 import { AnimatedCounter } from "@/components/landing/animated-counter";
+import { HeroProductWorkspace } from "@/components/landing/hero-product-workspace";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { ProductDemo } from "@/components/landing/product-demo";
 import { Brand } from "@/components/brand";
@@ -47,53 +48,35 @@ export default async function LandingPage() {
     <main className="landing-page min-h-dvh overflow-x-hidden bg-[var(--background)] text-[var(--foreground)]">
       <LandingNavbar locale={locale} />
 
-      <section className="landing-section relative mx-auto grid min-h-[760px] max-w-7xl items-center gap-14 px-5 pb-20 pt-32 sm:px-8 lg:grid-cols-[1.03fr_.97fr] lg:pb-24 lg:pt-36">
-        <div className="landing-reveal relative z-10">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#10C9A7]/25 bg-[#E6FAF6] px-3 py-1.5 text-xs font-bold text-[#087F6E]">
-            <Sparkles className="size-3.5" /> {th ? "LOYALTY ที่ใช้ง่ายจริง" : "LOYALTY, MADE SIMPLE"}
+      <section className="landing-section mx-auto max-w-7xl px-5 pb-16 pt-[104px] sm:px-8 sm:pb-20 sm:pt-28">
+        <div className="grid gap-6 lg:grid-cols-12 lg:items-stretch">
+          <div className="landing-reveal flex flex-col justify-center rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8 lg:col-span-4">
+            <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-[#E6FAF6] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[.12em] text-[#087F6E]"><Sparkles className="size-3" /> PumpPoint</div>
+            <h1 className="max-w-md text-[clamp(2rem,4vw,3rem)] font-semibold leading-[1.02] tracking-[-0.055em]">
+              {th ? "Loyalty ที่ใช้ง่ายแบบไม่ต้องคิดเยอะ" : "Loyalty that feels effortless."}
+            </h1>
+            <p className="mt-4 max-w-md text-sm leading-6 text-slate-500 sm:text-base dark:text-slate-400">
+              {th ? "สะสมแต้ม เติมบัตรสแตมป์ และปลดล็อกรางวัลจากร้านที่คุณชอบอยู่แล้ว" : "Collect points, complete stamp cards and unlock rewards from the places you already love."}
+            </p>
+            <div className="mt-6 flex flex-col gap-2 min-[430px]:flex-row lg:flex-col 2xl:flex-row">
+              <Link href="/signup" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#10C9A7] px-4 text-sm font-bold text-[#0F2D46] transition hover:-translate-y-px hover:bg-[#0EB99A]">
+                {th ? "เริ่มใช้งาน" : "Get Started"}<ArrowRight className="size-4" />
+              </Link>
+              <Link href="#how" className="inline-flex min-h-11 items-center justify-center gap-1 rounded-xl px-3 text-sm font-bold text-[#0F2D46] transition hover:bg-slate-50 dark:text-white dark:hover:bg-white/5">
+                {th ? "ดูวิธีใช้งาน" : "See how it works"}<ArrowRight className="size-3.5" />
+              </Link>
+            </div>
+            <p className="mt-5 flex items-center gap-2 text-[11px] font-medium text-slate-400"><Check className="size-3.5 text-[#10C9A7]" />{th ? "แต้ม · สแตมป์ · รางวัล · QR ในที่เดียว" : "Points · stamps · rewards · QR in one place"}</p>
           </div>
-          <h1 className="max-w-3xl text-[clamp(3.25rem,7vw,6.8rem)] font-semibold leading-[.91] tracking-[-0.072em]">
-            {th ? "เปลี่ยนทุกการแวะมา ให้กลายเป็นรางวัล" : "Turn every visit into a reward."}
-          </h1>
-          <p className="mt-7 max-w-xl text-base leading-8 text-slate-600 sm:text-lg dark:text-slate-300">
-            {th
-              ? "สะสมแต้ม ตอกสแตมป์ และรับรางวัลจากร้านที่คุณชอบ — ส่วนร้านค้าก็สร้างลูกค้าประจำได้ง่ายขึ้นในทุกการสแกน"
-              : "Collect points, fill digital stamp cards, and unlock rewards from places you love — while businesses turn every scan into a stronger customer relationship."}
-          </p>
-          <div className="mt-8 flex flex-col gap-3 min-[430px]:flex-row">
-            <Link href="/signup" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#10C9A7] px-5 text-sm font-bold text-[#0F2D46] shadow-lg shadow-[#10C9A7]/20 transition hover:-translate-y-0.5 hover:bg-[#0EB99A]">
-              {th ? "เริ่มใช้งานฟรี" : "Get Started Free"}<ArrowRight className="size-4" />
-            </Link>
-            <Link href="#product" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-bold text-[#0F2D46] transition hover:border-slate-300 hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10">
-              {th ? "ดูว่าทำงานอย่างไร" : "See how it works"}
-            </Link>
-          </div>
-          <p className="mt-5 flex items-center gap-2 text-xs font-medium text-slate-500"><Check className="size-3.5 text-[#10C9A7]" />{th ? "เริ่มได้ทันที · ไม่ต้องใช้บัตรพลาสติก" : "Free to start · No plastic cards · No extra hardware"}</p>
-        </div>
 
-        <div className="landing-reveal relative mx-auto w-full max-w-[560px] lg:mr-0">
-          <div className="absolute inset-10 rounded-full bg-[#10C9A7]/20 blur-[90px]" />
-          <div className="relative mx-auto w-[min(100%,360px)] rounded-[38px] border-[7px] border-[#0F2D46] bg-white p-4 shadow-[0_32px_90px_rgba(15,45,70,.2)] dark:bg-[#101b28]">
-            <div className="mx-auto mb-5 h-1.5 w-16 rounded-full bg-slate-200 dark:bg-white/10" />
-            <div className="rounded-[25px] bg-[#0F2D46] p-5 text-white">
-              <div className="flex items-center justify-between"><Brand compact className="[&>span]:text-white" /><span className="rounded-full bg-white/10 px-2 py-1 text-[10px] font-bold text-[#72E5D0]">MEMBER</span></div>
-              <p className="mt-8 text-xs text-white/55">{th ? "แต้มทั้งหมด" : "POINTS BALANCE"}</p>
-              <div className="mt-1 flex items-end gap-2"><AnimatedCounter value={1250} className="text-5xl font-semibold tracking-[-.06em]" /><span className="mb-1.5 text-sm text-[#72E5D0]">pts</span></div>
-              <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10"><div className="h-full w-[72%] rounded-full bg-[#10C9A7]" /></div>
-              <p className="mt-2 text-[10px] text-white/55">250 pts {th ? "ถึงรางวัลถัดไป" : "to your next reward"}</p>
-            </div>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-[#E6FAF6] p-4 text-[#0F2D46]"><Stamp className="size-5 text-[#087F6E]" /><p className="mt-5 text-xs font-bold">{th ? "Coffee Club" : "Coffee Club"}</p><p className="mt-1 text-[11px] text-slate-500">3 / 5 {th ? "สแตมป์" : "stamps"}</p></div>
-              <div className="rounded-2xl bg-[#FFF4D6] p-4 text-[#0F2D46]"><Gift className="size-5 text-[#B7791F]" /><p className="mt-5 text-xs font-bold">{th ? "รางวัลพร้อมแล้ว" : "Reward ready"}</p><p className="mt-1 text-[11px] text-slate-500">Free coffee</p></div>
-            </div>
+          <div className="landing-reveal min-w-0 lg:col-span-8">
+            <HeroProductWorkspace locale={locale} />
           </div>
-          <div className="landing-float absolute -left-2 top-28 hidden items-center gap-2 rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-xl min-[520px]:flex dark:border-white/10 dark:bg-[#162333]"><span className="grid size-8 place-items-center rounded-full bg-[#E6FAF6] text-sm">⚡</span><div><p className="text-xs font-bold text-[#0F2D46] dark:text-white">+100 pts</p><p className="text-[10px] text-slate-400">Morning Brew</p></div></div>
-          <div className="landing-float landing-float-b absolute -right-2 bottom-24 hidden items-center gap-2 rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-xl min-[520px]:flex dark:border-white/10 dark:bg-[#162333]"><span className="grid size-8 place-items-center rounded-full bg-[#FFF4D6]">🎁</span><div><p className="text-xs font-bold text-[#0F2D46] dark:text-white">{th ? "ปลดล็อกรางวัล" : "Reward unlocked"}</p><p className="text-[10px] text-slate-400">500 pts</p></div></div>
         </div>
       </section>
 
       <section id="product" className="landing-section mx-auto max-w-7xl px-5 py-24 sm:px-8">
-        <div className="landing-reveal max-w-2xl"><p className="landing-eyebrow">{th ? "ทุกอย่างอยู่ในที่เดียว" : "ONE SIMPLE EXPERIENCE"}</p><h2 className="landing-heading">{th ? "ความภักดีที่รู้สึกเป็นธรรมชาติ" : "Loyalty that feels effortless."}</h2><p className="landing-subheading">{th ? "ตั้งแต่แต้มแรกจนถึงรางวัล ทุกอย่างถูกออกแบบให้รวดเร็ว ชัดเจน และน่าใช้" : "From the first point to the next reward, every interaction stays fast, clear, and genuinely useful."}</p></div>
+        <div className="landing-reveal max-w-2xl"><p className="landing-eyebrow">{th ? "ทุกอย่างอยู่ในที่เดียว" : "ONE SIMPLE EXPERIENCE"}</p><h2 className="landing-heading">{th ? "ทุกสิ่งที่ต้องใช้ เพื่อให้ลูกค้ากลับมา" : "Everything you need to keep them coming back."}</h2><p className="landing-subheading">{th ? "ตั้งแต่แต้มแรกจนถึงรางวัล ทุกอย่างถูกออกแบบให้รวดเร็ว ชัดเจน และน่าใช้" : "From the first point to the next reward, every interaction stays fast, clear, and genuinely useful."}</p></div>
         <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {features.map(({ icon: Icon, title, copy }, index) => (
             <article key={title} className={`landing-bento landing-bento-${featureTones[index]}`}>
@@ -177,7 +160,7 @@ export default async function LandingPage() {
       <section className="landing-section mx-auto max-w-7xl px-5 py-24 sm:px-8">
         <div className="landing-reveal relative overflow-hidden rounded-[32px] bg-[linear-gradient(120deg,#0F2D46_0%,#123E5F_55%,#0A7468_145%)] px-6 py-16 text-center text-white sm:px-10 sm:py-20">
           <div className="absolute -left-24 -top-24 size-72 rounded-full bg-[#10C9A7]/15 blur-3xl"/><div className="absolute -bottom-32 -right-20 size-80 rounded-full bg-[#3B82F6]/15 blur-3xl"/>
-          <div className="relative mx-auto max-w-2xl"><Sparkles className="mx-auto size-7 text-[#72E5D0]"/><h2 className="mt-5 text-[clamp(2.35rem,5vw,4.4rem)] font-semibold leading-[.98] tracking-[-.06em]">{th ? "พร้อมทำให้ทุกการกลับมามีคุณค่าหรือยัง?" : "Ready to make every return visit count?"}</h2><p className="mx-auto mt-5 max-w-lg text-sm leading-7 text-white/60">{th ? "เริ่มสะสมรางวัลในฐานะลูกค้า หรือสร้างโปรแกรมที่ลูกค้าอยากกลับมาใช้" : "Start collecting as a customer, or launch a loyalty program your customers will actually want to use."}</p><div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><Link href="/signup" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#10C9A7] px-5 text-sm font-bold text-[#0F2D46] transition hover:-translate-y-0.5 hover:bg-[#0EB99A]">{th ? "เริ่มใช้งานฟรี" : "Get Started Free"}<ArrowRight className="size-4"/></Link><Link href="/programs/new" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/15 bg-white/[.08] px-5 text-sm font-bold text-white transition hover:bg-white/[.13]">{th ? "สร้างโปรแกรมสำหรับร้าน" : "Build a business program"}</Link></div></div>
+          <div className="relative mx-auto max-w-2xl"><Sparkles className="mx-auto size-7 text-[#72E5D0]"/><h2 className="mt-5 text-[clamp(2rem,4vw,2.5rem)] font-semibold leading-[1.02] tracking-[-.05em]">{th ? "พร้อมทำให้ทุกการกลับมามีคุณค่าหรือยัง?" : "Ready to make every return visit count?"}</h2><p className="mx-auto mt-5 max-w-lg text-sm leading-7 text-white/60">{th ? "เริ่มสะสมรางวัลในฐานะลูกค้า หรือสร้างโปรแกรมที่ลูกค้าอยากกลับมาใช้" : "Start collecting as a customer, or launch a loyalty program your customers will actually want to use."}</p><div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><Link href="/signup" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#10C9A7] px-5 text-sm font-bold text-[#0F2D46] transition hover:-translate-y-0.5 hover:bg-[#0EB99A]">{th ? "เริ่มใช้งานฟรี" : "Get Started Free"}<ArrowRight className="size-4"/></Link><Link href="/programs/new" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/15 bg-white/[.08] px-5 text-sm font-bold text-white transition hover:bg-white/[.13]">{th ? "สร้างโปรแกรมสำหรับร้าน" : "Build a business program"}</Link></div></div>
         </div>
       </section>
 

@@ -264,6 +264,16 @@ img, video, svg { max-width: 100%; }
 /* Marketing landing page */
 .landing-page { isolation: isolate; }
 .landing-section { scroll-margin-top: 76px; }
+.hero-workspace {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 94%, transparent);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--surface) 97%, transparent);
+  box-shadow: 0 18px 48px rgba(15, 45, 70, .08);
+}
+.hero-data-pulse { animation: hero-data-pulse .65s ease-out both; }
+.hero-stamp-pop { animation: hero-stamp-pop .5s cubic-bezier(.2,.85,.25,1.25) both; }
 .landing-eyebrow {
   color: #087f6e;
   font-size: .75rem;
@@ -273,7 +283,7 @@ img, video, svg { max-width: 100%; }
 }
 .landing-heading {
   margin-top: .75rem;
-  font-size: clamp(2.1rem, 5vw, 3.35rem);
+  font-size: clamp(1.85rem, 4vw, 2.25rem);
   font-weight: 650;
   letter-spacing: -.055em;
   line-height: 1.02;
@@ -351,6 +361,18 @@ img, video, svg { max-width: 100%; }
   50% { transform: translateY(-7px); }
 }
 
+@keyframes hero-data-pulse {
+  0% { color: white; transform: translateY(0); }
+  45% { color: #72e5d0; transform: translateY(-2px); }
+  100% { color: white; transform: translateY(0); }
+}
+
+@keyframes hero-stamp-pop {
+  0% { transform: scale(.76) rotate(-7deg); }
+  65% { transform: scale(1.08) rotate(2deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
 @keyframes landing-demo-enter {
   from { opacity: 0; transform: translateY(7px); }
   to { opacity: 1; transform: translateY(0); }
@@ -398,5 +420,5 @@ img, video, svg { max-width: 100%; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .landing-float, .landing-reveal, .landing-chart-line { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .hero-data-pulse, .hero-stamp-pop, .landing-float, .landing-reveal, .landing-chart-line { animation: none !important; opacity: 1 !important; transform: none !important; }
 }
