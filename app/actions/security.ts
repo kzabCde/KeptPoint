@@ -26,7 +26,11 @@ async function updatePassword(formData: FormData, errorPath: string) {
   if (!auth.user) redirect("/login?status=session-required");
 
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
-  if (error) redirect(`${errorPath}?error=password-update-failed`);
+  if (error) {
+    if (error.code === "same_password") redirect(`${errorPath}?error=password-same`);
+    if (error.code === "weak_password") redirect(`${errorPath}?error=password-weak`);
+    redirect(`${errorPath}?error=password-update-failed`);
+  }
 
   const { error: profileError } = await supabase
     .from("profiles")
