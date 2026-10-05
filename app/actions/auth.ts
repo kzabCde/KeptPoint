@@ -124,6 +124,7 @@ export async function requestPasswordReset(formData: FormData) {
   if (error && isEmailSendRateLimit(error)) {
     redirect("/forgot-password?error=email-rate-limit");
   }
+  if (error) redirect("/forgot-password?error=request-failed");
 
   redirect("/forgot-password?status=sent");
 }

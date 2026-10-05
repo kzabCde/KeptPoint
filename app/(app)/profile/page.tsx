@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight, LogOut, Mail, QrCode, Settings, ShieldCheck, Sparkles, Store, WalletCards } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
+import { PendingSubmitButton } from "@/components/pending-submit-button";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale } from "@/lib/preferences";
 import { messages } from "@/lib/i18n";
@@ -51,7 +52,7 @@ export default async function ProfilePage() {
       </div>
 
       <Link href="/wallet" className="cute-secondary mt-5 flex min-h-12 items-center justify-center gap-2 rounded-2xl font-semibold"><WalletCards className="size-4"/>{th ? "เปิดวอลเล็ตของฉัน" : "Open my wallet"}</Link>
-      <form action={signOut} className="mt-3"><button className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 font-semibold text-rose-700 dark:border-rose-950 dark:bg-rose-950/20 dark:text-rose-200"><LogOut className="size-4"/>{th ? "ออกจากระบบ" : "Sign out"}</button></form>
+      <form action={signOut} className="mt-3"><PendingSubmitButton pendingLabel={th ? "กำลังออก…" : "Signing out…"} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 font-semibold text-rose-700 dark:border-rose-950 dark:bg-rose-950/20 dark:text-rose-200"><LogOut className="size-4"/>{th ? "ออกจากระบบ" : "Sign out"}</PendingSubmitButton></form>
     </main>
   );
 }

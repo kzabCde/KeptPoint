@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Check, KeyRound, MailCheck, UserRound } from "lucide-react";
 import { resendConfirmation } from "@/app/actions/auth";
 import { Brand } from "@/components/brand";
+import { PendingSubmitButton } from "@/components/pending-submit-button";
 import { getLocale } from "@/lib/preferences";
 
 export const metadata = { title: "Check your email" };
@@ -31,7 +32,7 @@ export default async function CheckEmailPage({ searchParams }: { searchParams: P
 
           <form action={resendConfirmation} className="mt-6 grid gap-3">
             <input name="email" type="email" required placeholder={th ? "อีเมลที่ใช้สมัคร" : "Signup email"} className="cute-input h-12 px-4 outline-none"/>
-            <button className="cute-secondary h-12 rounded-2xl font-semibold">{th ? "ส่งลิงก์ยืนยันอีกครั้ง" : "Resend verification link"}</button>
+            <PendingSubmitButton pendingLabel={th ? "กำลังส่ง…" : "Sending…"} className="cute-secondary h-12 rounded-2xl font-semibold">{th ? "ส่งลิงก์ยืนยันอีกครั้ง" : "Resend verification link"}</PendingSubmitButton>
           </form>
           <Link href="/login" className="mt-4 flex min-h-11 items-center justify-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300"><UserRound className="size-4"/>{th ? "กลับไปหน้าเข้าสู่ระบบ" : "Back to sign in"}</Link>
         </section>

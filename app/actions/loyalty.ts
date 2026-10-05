@@ -1,6 +1,5 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -54,8 +53,8 @@ export async function joinProgram(programId: string) {
   revalidatePath("/home");
 }
 
-export async function issuePoints(input: { programId: string; memberId: string; amount: number; note?: string }) {
-  const valid = issueAmountSchema.parse({ ...input, idempotencyKey: randomUUID() });
+export async function issuePoints(input: { programId: string; memberId: string; amount: number; note?: string; idempotencyKey: string }) {
+  const valid = issueAmountSchema.parse(input);
   const { supabase } = await requireUser();
   const { data, error } = await supabase.rpc("issue_points", {
     p_program_id: valid.programId,
@@ -68,14 +67,15 @@ export async function issuePoints(input: { programId: string; memberId: string; 
   return data;
 }
 
-export async function issueStamp(input: { programId: string; memberId: string; amount?: number; note?: string }) {
+export async function issueStamp(input: { programId: string; memberId: string; amount?: number; note?: string; idempotencyKey: string }) {
+  const valid = issueAmountSchema.parse({ ...input, amount: input.amount ?? 1 });
   const { supabase } = await requireUser();
   const { data, error } = await supabase.rpc("issue_stamp", {
-    p_program_id: input.programId,
-    p_member_id: input.memberId,
-    p_amount: input.amount ?? 1,
-    p_note: input.note ?? undefined,
-    p_idempotency_key: randomUUID(),
+    p_program_id: valid.programId,
+    p_member_id: valid.memberId,
+    p_amount: valid.amount,
+    p_note: valid.note ?? undefined,
+    p_idempotency_key: valid.idempotencyKey,
   });
   if (error) throw new Error(error.message);
   return data;
@@ -116,9 +116,11 @@ export async function createReward(formData: FormData) {
   revalidatePath(`/programs/${input.slug}/manage/rewards`);
 }
 
-export async function redeemReward(rewardId: string) {
+export async function redeemReward(rewardId: string, formData: FormData) {
+  const parsedRewardId = z.string().uuid().parse(rewardId);
+  const idempotencyKey = z.string().uuid().parse(formData.get("idempotencyKey"));
   const { supabase } = await requireUser();
-  const { data, error } = await supabase.rpc("redeem_reward", { p_reward_id: rewardId, p_idempotency_key: randomUUID() });
+  const { data, error } = await supabase.rpc("redeem_reward", { p_reward_id: parsedRewardId, p_idempotency_key: idempotencyKey });
   if (error) throw new Error(error.message);
   revalidatePath("/activity");
   void data;
@@ -165,7 +167,8 @@ export async function issuePointsForm(formData: FormData) {
   const memberId = String(formData.get("memberId") ?? "");
   const slug = String(formData.get("slug") ?? "");
   const amount = Number(formData.get("amount"));
-  await issuePoints({ programId, memberId, amount });
+  const idempotencyKey = String(formData.get("idempotencyKey") ?? "");
+  await issuePoints({ programId, memberId, amount, idempotencyKey });
   revalidatePath("/programs/" + slug + "/manage/members");
   revalidatePath("/home");
   redirect("/programs/" + slug + "/manage/members?ok=points");
@@ -176,7 +179,8 @@ export async function issueStampForm(formData: FormData) {
   const memberId = String(formData.get("memberId") ?? "");
   const slug = String(formData.get("slug") ?? "");
   const amount = Number(formData.get("amount") ?? 1);
-  await issueStamp({ programId, memberId, amount });
+  const idempotencyKey = String(formData.get("idempotencyKey") ?? "");
+  await issueStamp({ programId, memberId, amount, idempotencyKey });
   revalidatePath("/programs/" + slug + "/manage/members");
   revalidatePath("/home");
   redirect("/programs/" + slug + "/manage/members?ok=stamp");

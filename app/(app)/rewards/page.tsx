@@ -1,7 +1,9 @@
+import { randomUUID } from "node:crypto";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Gift, LockKeyhole, Search, Sparkles, Store } from "lucide-react";
 import { redeemReward } from "@/app/actions/loyalty";
+import { PendingSubmitButton } from "@/components/pending-submit-button";
 import { getRewardState, rewardProgress } from "@/lib/reward-state";
 import { getLocale } from "@/lib/preferences";
 import { createClient } from "@/lib/supabase/server";
@@ -55,12 +57,13 @@ export default async function RewardsPage({ searchParams }: { searchParams: Prom
         const cost = reward.reward_type === "points" ? `${reward.points_required ?? 0} ${th ? "แต้ม" : "pts"}` : reward.reward_type === "stamps" ? `${reward.stamps_required ?? 0} ${th ? "สแตมป์" : "stamps"}` : (th ? "รับสิทธิ์ที่ร้าน" : "In-store reward");
         const missing = required ? Math.max(0, Number(required) - current) : 0;
         const redeem = redeemReward.bind(null, reward.id);
+        const idempotencyKey = randomUUID();
         return <article key={reward.id} className="cute-card flex min-w-0 flex-col overflow-hidden p-5 shadow-none">
           <div className="flex items-start gap-3"><span className={`grid size-12 shrink-0 place-items-center rounded-2xl ${state === "available" ? "bg-[#10C9A7] text-[#0F2D46]" : "bg-slate-100 text-slate-500 dark:bg-white/5"}`}>{state === "locked" ? <LockKeyhole className="size-5" /> : <Gift className="size-5" />}</span><div className="min-w-0"><p className="truncate text-xs font-semibold text-slate-500"><Store className="mr-1 inline size-3.5" />{program?.name ?? "PumpPoint"}</p><h2 className="mt-1 break-words text-lg font-semibold tracking-tight">{reward.name}</h2></div></div>
           <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-500">{reward.description || cost}</p>
           <div className="mt-4 flex items-center justify-between gap-3"><span className="text-lg font-bold text-[#0F2D46] dark:text-white">{cost}</span><span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${state === "available" ? "bg-[#E6FAF6] text-[#087F6E]" : "bg-slate-100 text-slate-500 dark:bg-white/5"}`}>{state === "available" ? (th ? "พร้อมแลก" : "Ready") : state === "almost" ? (th ? "ใกล้แล้ว" : "Almost") : (th ? "ยังไม่ถึง" : "Locked")}</span></div>
           {required && required > 0 && <div className="mt-4"><div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-white/10"><div className="h-full rounded-full bg-[#10C9A7]" style={{ width: `${progress}%` }} /></div><p className="mt-2 text-xs text-slate-500">{state === "available" ? (th ? "คุณมีพอสำหรับรางวัลนี้" : "You have enough for this reward") : (th ? `อีก ${missing} ก็พร้อมแลก` : `${missing} more to unlock`)}</p></div>}
-          <div className="mt-auto grid grid-cols-2 gap-2 pt-5"><Link href={program?.slug ? `/programs/${program.slug}` : "/wallet"} className="cute-secondary flex min-h-11 items-center justify-center rounded-xl px-3 text-sm font-semibold">{th ? "รายละเอียด" : "Details"}</Link><form action={redeem}><button disabled={state !== "available" || reward.stock === 0} className="cute-primary min-h-11 w-full rounded-xl px-3 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none">{th ? "แลกรางวัล" : "Redeem"}</button></form></div>
+          <div className="mt-auto grid grid-cols-2 gap-2 pt-5"><Link href={program?.slug ? `/programs/${program.slug}` : "/wallet"} className="cute-secondary flex min-h-11 items-center justify-center rounded-xl px-3 text-sm font-semibold">{th ? "รายละเอียด" : "Details"}</Link><form action={redeem}><input type="hidden" name="idempotencyKey" value={idempotencyKey}/><PendingSubmitButton pendingLabel={th ? "กำลังแลก…" : "Redeeming…"} disabled={state !== "available" || reward.stock === 0} className="cute-primary min-h-11 w-full rounded-xl px-3 text-sm font-bold disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none">{th ? "แลกรางวัล" : "Redeem"}</PendingSubmitButton></form></div>
         </article>;
       })}
     </section>}

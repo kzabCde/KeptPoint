@@ -28,6 +28,7 @@ export async function completeOnboarding(formData: FormData) {
     .update({
       username: parsed.data.username,
       display_name: current?.display_name || parsed.data.username,
+      password_set: current?.password_set || auth.user.app_metadata?.provider === "email",
       updated_at: new Date().toISOString(),
     })
     .eq("id", auth.user.id)
@@ -42,5 +43,5 @@ export async function completeOnboarding(formData: FormData) {
 
   revalidatePath("/home");
   revalidatePath("/profile");
-  redirect(current?.password_set ? "/home?onboarding=complete" : "/set-password?welcome=1");
+  redirect("/home?onboarding=complete");
 }

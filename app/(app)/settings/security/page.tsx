@@ -4,6 +4,7 @@ import { ArrowLeft, BadgeCheck, KeyRound, LogOut, Mail, ShieldCheck } from "luci
 import { signOut } from "@/app/actions/auth";
 import { changePassword } from "@/app/actions/security";
 import { PasswordFields } from "@/components/password-fields";
+import { PendingSubmitButton } from "@/components/pending-submit-button";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale } from "@/lib/preferences";
 
@@ -52,13 +53,13 @@ export default async function SecurityPage({ searchParams }: { searchParams: Pro
         <div className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-2xl bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-200"><KeyRound className="size-5"/></span><div><h2 className="font-semibold">{th ? "เปลี่ยนรหัสผ่าน" : "Change password"}</h2><p className="mt-0.5 text-xs text-zinc-500">{th ? "ตั้งรหัสผ่านใหม่ที่ต่างจากรหัสเดิมสำหรับการเข้าสู่ระบบครั้งถัดไป" : "Choose a new password that differs from your current password."}</p></div></div>
         <form action={changePassword} className="mt-5 grid gap-5">
           <PasswordFields locale={locale}/>
-          <button className="cute-primary h-12 rounded-2xl font-semibold">{th ? "เปลี่ยนรหัสผ่าน" : "Change password"}</button>
+          <PendingSubmitButton pendingLabel={th ? "กำลังเปลี่ยน…" : "Changing…"} className="cute-primary h-12 rounded-2xl font-semibold">{th ? "เปลี่ยนรหัสผ่าน" : "Change password"}</PendingSubmitButton>
         </form>
       </section>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         <Link href="/forgot-password" className="cute-secondary flex min-h-12 items-center justify-center rounded-2xl px-4 text-sm font-semibold">{th ? "ส่งลิงก์รีเซ็ตรหัสผ่าน" : "Send reset link"}</Link>
-        <form action={signOut}><button className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 text-sm font-semibold text-rose-700 dark:border-rose-950 dark:bg-rose-950/20 dark:text-rose-200"><LogOut className="size-4"/>{th ? "ออกจากระบบ" : "Sign out"}</button></form>
+        <form action={signOut}><PendingSubmitButton pendingLabel={th ? "กำลังออก…" : "Signing out…"} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 text-sm font-semibold text-rose-700 dark:border-rose-950 dark:bg-rose-950/20 dark:text-rose-200"><LogOut className="size-4"/>{th ? "ออกจากระบบ" : "Sign out"}</PendingSubmitButton></form>
       </div>
     </main>
   );

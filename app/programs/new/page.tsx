@@ -1,13 +1,18 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { createProgram } from "@/app/actions/loyalty";
+import { PendingSubmitButton } from "@/components/pending-submit-button";
 import { getLocale } from "@/lib/preferences";
 import { messages } from "@/lib/i18n";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Create program" };
 
 export default async function NewProgramPage() {
-  const locale = await getLocale();
+  const [locale, supabase] = await Promise.all([getLocale(), createClient()]);
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) redirect("/login");
   const m = messages[locale].programNew;
   const isTh = locale === "th";
   return (
@@ -22,7 +27,7 @@ export default async function NewProgramPage() {
         <label className="grid gap-2 text-sm font-medium">{isTh ? "จำนวนสแตมป์ต่อบัตร" : "Stamps required per card"}<input name="requiredStamps" type="number" min="2" max="100" placeholder="10" className="h-12 rounded-2xl border border-zinc-200 bg-white px-4 dark:border-zinc-800 dark:bg-zinc-900"/><span className="text-xs font-normal text-zinc-500">{isTh ? "จำเป็นเมื่อเลือกบัตรสแตมป์หรือไฮบริด" : "Required for stamp-card and hybrid programs."}</span></label>
         <label className="grid gap-2 text-sm font-medium">{m.visibility}<select name="visibility" className="h-12 rounded-2xl border border-zinc-200 bg-white px-4 dark:border-zinc-800 dark:bg-zinc-900"><option value="public">{m.public}</option><option value="private">{m.private}</option><option value="invite_only">{m.inviteOnly}</option></select></label>
         <label className="grid gap-2 text-sm font-medium">{m.descriptionLabel}<textarea name="description" maxLength={500} rows={4} className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4 outline-none focus:border-emerald-500 dark:border-zinc-800 dark:bg-zinc-900" placeholder={m.descriptionPlaceholder}/></label>
-        <button className="h-12 rounded-2xl bg-emerald-600 font-semibold text-white dark:bg-emerald-400 dark:text-emerald-950">{m.create}</button>
+        <PendingSubmitButton pendingLabel={isTh ? "กำลังสร้าง…" : "Creating…"} className="h-12 rounded-2xl bg-emerald-600 font-semibold text-white dark:bg-emerald-400 dark:text-emerald-950">{m.create}</PendingSubmitButton>
       </form>
     </main>
   );

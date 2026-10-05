@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Camera, CameraOff, CheckCircle2 } from "lucide-react";
 import { acceptQrToken } from "@/app/actions/loyalty";
+import { PendingSubmitButton } from "@/components/pending-submit-button";
 
 type Detector = { detect(source: HTMLVideoElement): Promise<Array<{ rawValue?: string }>> };
 type DetectorCtor = new (options: { formats: string[] }) => Detector;
@@ -80,7 +81,7 @@ export function QrScanner({ initialToken="", locale }: { initialToken?: string; 
     {message&&<p className="mt-3 rounded-2xl bg-zinc-100 px-4 py-3 text-sm leading-6 text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">{message}</p>}
     <form action={acceptQrToken} className="mt-5 grid gap-3">
       <label className="grid gap-2 text-sm font-medium">QR token<input name="token" value={token} onChange={e=>setToken(e.target.value)} required minLength={16} maxLength={256} placeholder={th?"วาง QR token":"Paste QR token"} className="h-12 min-w-0 rounded-2xl border border-zinc-200 bg-white px-4 text-sm outline-none focus:border-emerald-500 dark:border-zinc-800 dark:bg-zinc-900"/></label>
-      <button className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-emerald-600 font-semibold text-white dark:bg-emerald-400 dark:text-emerald-950"><CheckCircle2 className="size-4"/>{th?"ยืนยัน QR":"Accept QR"}</button>
+      <PendingSubmitButton pendingLabel={th?"กำลังตรวจสอบ…":"Accepting…"} className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-emerald-600 font-semibold text-white dark:bg-emerald-400 dark:text-emerald-950"><CheckCircle2 className="size-4"/>{th?"ยืนยัน QR":"Accept QR"}</PendingSubmitButton>
     </form>
   </div>;
 }

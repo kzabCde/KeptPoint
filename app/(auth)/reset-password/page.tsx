@@ -3,6 +3,7 @@ import { KeyRound, ShieldCheck } from "lucide-react";
 import { resetPassword } from "@/app/actions/security";
 import { Brand } from "@/components/brand";
 import { PasswordFields } from "@/components/password-fields";
+import { PendingSubmitButton } from "@/components/pending-submit-button";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale } from "@/lib/preferences";
 
@@ -36,7 +37,7 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
           {error && <p role="alert" className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{errorText[error][locale]}</p>}
           <form action={resetPassword} className="mt-6 grid gap-5">
             <PasswordFields locale={locale}/>
-            <button className="cute-primary h-12 rounded-2xl font-semibold">{th ? "บันทึกรหัสผ่านใหม่" : "Save new password"}</button>
+            <PendingSubmitButton pendingLabel={th ? "กำลังบันทึก…" : "Saving…"} className="cute-primary h-12 rounded-2xl font-semibold">{th ? "บันทึกรหัสผ่านใหม่" : "Save new password"}</PendingSubmitButton>
           </form>
         </section>
       </div>

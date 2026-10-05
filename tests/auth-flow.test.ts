@@ -8,6 +8,7 @@ test("verified accounts with username go directly home",()=>assert.equal(postAut
 test("verified accounts respect a safe app next path",()=>assert.equal(postAuthDestination({ username:"kept_user" },"/wallet"),"/wallet"));
 test("unsafe external next paths fall back to home",()=>assert.equal(safeNextPath("//evil.example"),"/home"));
 test("auth callback routes cannot be used as next",()=>assert.equal(safeNextPath("/auth/confirm"),"/home"));
+test("auth completion routes cannot redirect back into auth",()=>assert.equal(safeNextPath("/auth/complete?next=/wallet"),"/home"));
 test("landing auth code is recovered through the completion flow",()=>assert.equal(
   authCompletionPathFromLanding({ code:"confirm-code" }),
   "/auth/complete?code=confirm-code&next=%2Fhome",
