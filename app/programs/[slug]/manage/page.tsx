@@ -17,11 +17,11 @@ export default async function ManageProgramPage({ params }: { params: Promise<{ 
     supabase.from("program_members").select("id", { count: "exact", head: true }).eq("program_id", program.id).eq("status", "active"),
     supabase.from("rewards").select("id", { count: "exact", head: true }).eq("program_id", program.id).eq("active", true),
     supabase.from("reward_redemptions").select("id", { count: "exact", head: true }).eq("program_id", program.id).in("status", ["pending","reserved"]),
-    supabase.from("point_transactions").select("amount").eq("program_id", program.id).gt("amount", 0),
+    supabase.from("point_transactions").select("total:amount.sum()").eq("program_id", program.id).gt("amount", 0),
     supabase.from("point_transactions").select("id,amount,type,created_at,profiles:user_id(display_name,username)").eq("program_id", program.id).order("created_at", { ascending: false }).limit(3),
   ]);
 
-  const totalIssued = (issued.data ?? []).reduce((sum, row) => sum + Number(row.amount), 0);
+  const totalIssued = Number(issued.data?.[0]?.total ?? 0);
   const links = [
     [UsersRound, m.members, th ? "ค้นหาสมาชิกและออกแต้ม/สแตมป์" : "Search members and issue points/stamps", `/programs/${slug}/manage/members`, "bg-mint-soft text-emerald-700 dark:text-emerald-200"],
     [Gift, m.rewards, m.rewardsCopy, `/programs/${slug}/manage/rewards`, "bg-reward-soft text-amber-700 dark:text-amber-200"],

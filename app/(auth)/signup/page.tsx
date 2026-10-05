@@ -3,6 +3,7 @@ import { ArrowLeft, AtSign, Mail, ShieldCheck, Sparkles } from "lucide-react";
 import { signUpWithEmail } from "@/app/actions/auth";
 import { Brand } from "@/components/brand";
 import { PasswordFields } from "@/components/password-fields";
+import { PendingSubmitButton } from "@/components/pending-submit-button";
 import { getLocale } from "@/lib/preferences";
 
 export const metadata = { title: "Create account" };
@@ -42,7 +43,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
             <PasswordFields locale={locale}/>
 
             <div className="rounded-2xl bg-emerald-50 p-4 text-xs leading-5 text-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-100"><div className="flex gap-2"><ShieldCheck className="mt-0.5 size-4 shrink-0"/><p>{th ? "หลังสร้างบัญชี เราจะส่งลิงก์ยืนยันอีเมลครั้งเดียว ลิงก์นี้มีไว้ยืนยันการสมัคร ไม่ใช่ช่องทางล็อกอินประจำวัน" : "After signup, we send one email verification link. It confirms account creation and is not an everyday sign-in method."}</p></div></div>
-            <button className="cute-primary inline-flex h-12 items-center justify-center gap-2 rounded-2xl font-semibold"><Mail className="size-4"/>{th ? "สร้างบัญชีและส่งลิงก์ยืนยัน" : "Create account & send verification"}</button>
+            <PendingSubmitButton pendingLabel={th ? "กำลังสร้างบัญชี…" : "Creating account…"} className="cute-primary inline-flex h-12 items-center justify-center gap-2 rounded-2xl font-semibold"><Mail className="size-4"/>{th ? "สร้างบัญชีและส่งลิงก์ยืนยัน" : "Create account & send verification"}</PendingSubmitButton>
           </form>
 
           <p className="mt-6 text-center text-sm text-zinc-500">{th ? "มีบัญชีแล้ว?" : "Already have an account?"} <Link href="/login" className="font-semibold text-emerald-700 dark:text-emerald-300">{th ? "เข้าสู่ระบบ" : "Sign in"}</Link></p>

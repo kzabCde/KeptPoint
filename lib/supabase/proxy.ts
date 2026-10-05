@@ -21,7 +21,9 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  await supabase.auth.getUser();
+  // getClaims verifies the access token and refreshes cookies when needed,
+  // without forcing a user-record network lookup on every matched request.
+  await supabase.auth.getClaims();
   response.headers.set("Cache-Control", "private, no-store");
   return response;
 }

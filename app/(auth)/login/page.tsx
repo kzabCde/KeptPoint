@@ -2,6 +2,7 @@ import Link from "next/link";
 import { KeyRound, Mail, Sparkles } from "lucide-react";
 import { loginWithEmail, loginWithGoogle } from "@/app/actions/auth";
 import { Brand } from "@/components/brand";
+import { PendingSubmitButton } from "@/components/pending-submit-button";
 import { getLocale } from "@/lib/preferences";
 import { messages } from "@/lib/i18n";
 
@@ -47,13 +48,13 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             <label className="grid gap-2 text-sm font-semibold">{th ? "อีเมล" : "Email"}<div className="cute-input flex items-center gap-2 px-4"><Mail className="size-4 shrink-0 text-emerald-600"/><input name="email" type="email" autoComplete="email" required placeholder={m.email} className="h-12 min-w-0 flex-1 bg-transparent outline-none"/></div></label>
             <label className="grid gap-2 text-sm font-semibold">{th ? "รหัสผ่าน" : "Password"}<div className="cute-input flex items-center gap-2 px-4"><KeyRound className="size-4 shrink-0 text-emerald-600"/><input name="password" type="password" autoComplete="current-password" required minLength={8} placeholder={m.password} className="h-12 min-w-0 flex-1 bg-transparent outline-none"/></div></label>
             <div className="flex justify-end"><Link href="/forgot-password" className="min-h-11 py-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">{th ? "ลืมรหัสผ่าน?" : "Forgot password?"}</Link></div>
-            <button className="cute-primary h-12 rounded-2xl font-semibold">{m.signIn}</button>
+            <PendingSubmitButton pendingLabel={th ? "กำลังเข้าสู่ระบบ…" : "Signing in…"} className="cute-primary h-12 rounded-2xl font-semibold">{m.signIn}</PendingSubmitButton>
           </form>
 
           <Link href="/signup" className="cute-secondary mt-3 flex h-12 items-center justify-center rounded-2xl font-semibold">{th ? "สร้างบัญชีใหม่" : "Create account"}</Link>
 
           <div className="my-6 flex items-center gap-3 text-xs text-zinc-400"><span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800"/><span>{th ? "หรือ" : "OR"}</span><span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800"/></div>
-          <form action={loginWithGoogle}><button className="cute-secondary h-12 w-full rounded-2xl font-semibold">{m.google}</button></form>
+          <form action={loginWithGoogle}><PendingSubmitButton pendingLabel={th ? "กำลังไป Google…" : "Opening Google…"} className="cute-secondary h-12 w-full rounded-2xl font-semibold">{m.google}</PendingSubmitButton></form>
         </section>
       </div>
     </main>

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { isLocale, isTheme, setPreferenceCookies } from "@/lib/preferences";
-import { postAuthDestination } from "@/lib/auth-flow";
+import { canonicalAuthOrigin, postAuthDestination } from "@/lib/auth-flow";
 import { isEmailSendRateLimit } from "@/lib/auth-errors";
 
 function readEmail(formData: FormData) {
@@ -36,7 +36,7 @@ async function appOrigin() {
   const forwarded = h.get("x-forwarded-host");
   const host = forwarded ?? h.get("host");
   const proto = h.get("x-forwarded-proto") ?? (host?.includes("localhost") ? "http" : "https");
-  return host ? `${proto}://${host}` : "https://keptpoint.vercel.app";
+  return canonicalAuthOrigin(host ? `${proto}://${host}` : "https://pumppoint.vercel.app");
 }
 
 async function profileForUser(userId: string) {
@@ -77,7 +77,7 @@ export async function signUpWithEmail(formData: FormData) {
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      emailRedirectTo: `${origin}/auth/complete?next=/home`,
+      emailRedirectTo: `${origin}/auth/complete`,
       data: { desired_username: parsed.data.username },
     },
   });
@@ -100,7 +100,7 @@ export async function resendConfirmation(formData: FormData) {
     type: "signup",
     email,
     options: {
-      emailRedirectTo: `${origin}/auth/complete?next=/home`,
+      emailRedirectTo: `${origin}/auth/complete`,
     },
   });
 
@@ -124,6 +124,7 @@ export async function requestPasswordReset(formData: FormData) {
   if (error && isEmailSendRateLimit(error)) {
     redirect("/forgot-password?error=email-rate-limit");
   }
+  if (error) redirect("/forgot-password?error=request-failed");
 
   redirect("/forgot-password?status=sent");
 }

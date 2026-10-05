@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, MailQuestion, ShieldCheck } from "lucide-react";
 import { requestPasswordReset } from "@/app/actions/auth";
 import { Brand } from "@/components/brand";
+import { PendingSubmitButton } from "@/components/pending-submit-button";
 import { getLocale } from "@/lib/preferences";
 
 export const metadata = { title: "Forgot password" };
@@ -29,6 +30,7 @@ export default async function ForgotPasswordPage({ searchParams }: { searchParam
           {status === "session-required" && <p role="alert" className="mt-5 rounded-2xl bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800 dark:bg-amber-950/30 dark:text-amber-200">{th ? "ลิงก์รีเซ็ตยังไม่ได้สร้าง session กรุณาเปิดลิงก์ล่าสุดจากอีเมลอีกครั้ง หรือส่งลิงก์ใหม่" : "The reset link did not establish a recovery session. Open the latest email link again or request a new one."}</p>}
           {error === "recovery-link-invalid" && <p role="alert" className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{th ? "ลิงก์รีเซ็ตรหัสผ่านไม่ถูกต้อง หมดอายุ หรือถูกใช้แล้ว กรุณาส่งลิงก์ใหม่" : "The reset link is invalid, expired, or already used. Request a new reset link."}</p>}
           {error === "email-rate-limit" && <p role="alert" className="mt-5 rounded-2xl bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800 dark:bg-amber-950/30 dark:text-amber-200">{th ? "ระบบส่งอีเมลถึงขีดจำกัดชั่วคราว กรุณารอสักครู่แล้วลองใหม่" : "Email sending is temporarily rate-limited. Please wait and try again."}</p>}
+          {error === "request-failed" && <p role="alert" className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{th ? "ส่งคำขอรีเซ็ตรหัสผ่านไม่สำเร็จ กรุณาลองใหม่" : "Could not request a password reset. Please try again."}</p>}
           {error === "email-required" && <p role="alert" className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{th ? "กรุณากรอกอีเมล" : "Enter your email."}</p>}
 
           <form action={requestPasswordReset} className="mt-6 grid gap-4">
@@ -36,7 +38,7 @@ export default async function ForgotPasswordPage({ searchParams }: { searchParam
               {th ? "อีเมล" : "Email"}
               <input name="email" type="email" required autoComplete="email" className="cute-input h-12 px-4 outline-none" placeholder="you@example.com"/>
             </label>
-            <button className="cute-primary h-12 rounded-2xl font-semibold">{th ? "ส่งลิงก์รีเซ็ตรหัสผ่าน" : "Send reset link"}</button>
+            <PendingSubmitButton pendingLabel={th ? "กำลังส่ง…" : "Sending…"} className="cute-primary h-12 rounded-2xl font-semibold">{th ? "ส่งลิงก์รีเซ็ตรหัสผ่าน" : "Send reset link"}</PendingSubmitButton>
           </form>
           <Link href="/login" className="mt-4 flex min-h-11 items-center justify-center text-sm font-semibold text-emerald-700 dark:text-emerald-300">{th ? "กลับไปเข้าสู่ระบบ" : "Back to sign in"}</Link>
         </section>

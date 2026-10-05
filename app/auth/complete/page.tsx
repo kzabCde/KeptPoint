@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { LoaderCircle, ShieldCheck } from "lucide-react";
 import { Brand } from "@/components/brand";
+import { safeNextPath } from "@/lib/auth-flow";
 import { createClient } from "@/lib/supabase/client";
 
 const EMAIL_OTP_TYPES = new Set<EmailOtpType>([
@@ -14,11 +15,6 @@ const EMAIL_OTP_TYPES = new Set<EmailOtpType>([
   "recovery",
   "email_change",
 ]);
-
-function safeNextPath(value: string | null) {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/home";
-  return value;
-}
 
 function asEmailOtpType(value: string | null): EmailOtpType | null {
   return value && EMAIL_OTP_TYPES.has(value as EmailOtpType) ? (value as EmailOtpType) : null;

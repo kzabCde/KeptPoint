@@ -2,7 +2,7 @@
 
 KeptPoint is a universal points, stamps and rewards wallet where one account can both collect rewards and operate loyalty programs.
 
-Production: https://keptpoint.vercel.app
+Production: https://pumppoint.vercel.app
 
 ## v0.1.4 — Hybrid Auth + Cute UX Refresh
 

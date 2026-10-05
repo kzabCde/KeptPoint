@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   ArrowRight,
   BarChart3,
@@ -20,11 +21,15 @@ import { HeroProductWorkspace } from "@/components/landing/hero-product-workspac
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { ProductDemo } from "@/components/landing/product-demo";
 import { Brand } from "@/components/brand";
+import { authCompletionPathFromLanding } from "@/lib/auth-flow";
 import { getLocale } from "@/lib/preferences";
 
 const featureTones = ["mint", "blue", "navy", "yellow", "blue", "mint"] as const;
 
-export default async function LandingPage() {
+export default async function LandingPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const completionPath = authCompletionPathFromLanding(await searchParams);
+  if (completionPath) redirect(completionPath);
+
   const locale = await getLocale();
   const th = locale === "th";
 
