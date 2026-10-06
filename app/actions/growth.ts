@@ -42,7 +42,7 @@ export async function saveReferralSettings(formData: FormData) {
   revalidatePath(`/programs/${input.slug}/growth`);
 }
 
-export async function generateReferralCode(programId: string, slug: string) {
+export async function generateReferralCode(programId: string, slug: string, _formData?: FormData) {
   const validProgramId = uuid.parse(programId);
   const validSlug = slugSchema.parse(slug);
   const { supabase } = await requireUser();
@@ -87,6 +87,7 @@ export async function createCoupon(formData: FormData) {
     maxPerUser: formData.get("maxPerUser") || 1,
     expiresAt: formData.get("expiresAt") || undefined,
   });
+  if (input.discountType !== "perk" && input.discountValue == null) throw new Error("discount value is required");
   if (input.discountType === "percent" && (input.discountValue ?? 0) > 100) throw new Error("percentage cannot exceed 100");
   const { supabase } = await requireUser();
   const { error } = await supabase.from("coupons").insert({
@@ -105,7 +106,7 @@ export async function createCoupon(formData: FormData) {
   revalidatePath(`/programs/${input.slug}/growth`);
 }
 
-export async function toggleCoupon(couponId: string, slug: string, nextActive: boolean) {
+export async function toggleCoupon(couponId: string, slug: string, nextActive: boolean, _formData?: FormData) {
   const validId = uuid.parse(couponId);
   const validSlug = slugSchema.parse(slug);
   const { supabase } = await requireUser();
@@ -115,7 +116,7 @@ export async function toggleCoupon(couponId: string, slug: string, nextActive: b
   revalidatePath(`/programs/${validSlug}/growth`);
 }
 
-export async function claimCoupon(couponId: string, slug: string) {
+export async function claimCoupon(couponId: string, slug: string, _formData?: FormData) {
   const validId = uuid.parse(couponId);
   const validSlug = slugSchema.parse(slug);
   const { supabase } = await requireUser();
@@ -124,7 +125,7 @@ export async function claimCoupon(couponId: string, slug: string) {
   revalidatePath(`/programs/${validSlug}/growth`);
 }
 
-export async function redeemCoupon(redemptionId: string, slug: string) {
+export async function redeemCoupon(redemptionId: string, slug: string, _formData?: FormData) {
   const validId = uuid.parse(redemptionId);
   const validSlug = slugSchema.parse(slug);
   const { supabase } = await requireUser();
@@ -161,7 +162,7 @@ export async function createTier(formData: FormData) {
   revalidatePath(`/programs/${input.slug}/growth`);
 }
 
-export async function toggleTier(tierId: string, slug: string, nextActive: boolean) {
+export async function toggleTier(tierId: string, slug: string, nextActive: boolean, _formData?: FormData) {
   const validId = uuid.parse(tierId);
   const validSlug = slugSchema.parse(slug);
   const { supabase } = await requireUser();
