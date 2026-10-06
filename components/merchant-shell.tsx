@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, Gift, LayoutDashboard, QrCode, ReceiptText, UsersRound } from "lucide-react";
+import { ArrowLeft, Gift, LayoutDashboard, QrCode, ReceiptText, Sparkles, UsersRound } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,7 @@ export function MerchantShell({ children, slug, programName }: { children: React
     [base, "Overview", LayoutDashboard],
     [`${base}/members`, "Customers", UsersRound],
     [`${base}/rewards`, "Rewards", Gift],
+    [`${base}/growth`, "Growth", Sparkles],
     [`${base}/qr`, "QR / Scanner", QrCode],
     [`${base}/redemptions`, "Transactions", ReceiptText],
   ] as const;
