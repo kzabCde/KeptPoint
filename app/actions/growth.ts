@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { normalizeReferralCode, referralInvitePath } from "@/lib/share-links";
+import { legacyReferralInvitePath, normalizeReferralCode, referralInvitePath } from "@/lib/share-links";
 import { createClient } from "@/lib/supabase/server";
 
 async function requireUser() {
@@ -23,6 +23,7 @@ function referralErrorCode(message: string) {
   if (value.includes("already claimed")) return "already-claimed";
   if (value.includes("blocked")) return "blocked";
   if (value.includes("disabled")) return "disabled";
+  if (value.includes("ambiguous")) return "ambiguous";
   return "invalid";
 }
 
@@ -74,18 +75,24 @@ export async function claimReferral(programId: string, slug: string, formData: F
   revalidatePath(`/programs/${input.slug}/growth`);
 }
 
-export async function acceptReferralInvite(code: string, slug: string, _formData?: FormData) {
+export async function acceptReferralInvite(programId: string, code: string, slug: string, _formData?: FormData) {
+  const validProgramId = uuid.parse(programId);
   const validSlug = slugSchema.parse(slug);
   const validCode = normalizeReferralCode(code);
-  if (!validCode) redirect(`/ref/${encodeURIComponent(validSlug)}/invalid?error=invalid`);
+  if (!validCode) redirect(`/ref/${encodeURIComponent(validProgramId)}/${encodeURIComponent(validSlug)}/invalid?error=invalid`);
 
-  const path = referralInvitePath(validSlug, validCode);
+  const path = referralInvitePath(validProgramId, validSlug, validCode);
   const { supabase } = await requireUser();
-  const { data, error } = await supabase.rpc("accept_referral_invite", { p_code: validCode });
+  const { data, error } = await supabase.rpc("accept_referral_invite", {
+    p_program_id: validProgramId,
+    p_code: validCode,
+  });
   if (error) redirect(`${path}?error=${referralErrorCode(error.message)}`);
 
-  const result = data as { slug?: string; membership_status?: string } | null;
-  if (!result?.slug || result.slug !== validSlug) redirect(`${path}?error=invalid`);
+  const result = data as { program_id?: string; slug?: string; membership_status?: string } | null;
+  if (!result?.program_id || result.program_id !== validProgramId || result.slug !== validSlug) {
+    redirect(`${path}?error=invalid`);
+  }
 
   revalidatePath(`/programs/${validSlug}`);
   revalidatePath(`/programs/${validSlug}/growth`);
@@ -93,6 +100,29 @@ export async function acceptReferralInvite(code: string, slug: string, _formData
   revalidatePath("/home");
 
   if (result.membership_status === "pending") redirect(`${path}?status=pending`);
+  redirect(`/programs/${validSlug}/growth#referral`);
+}
+
+export async function acceptLegacyReferralInvite(code: string, slug: string, _formData?: FormData) {
+  const validSlug = slugSchema.parse(slug);
+  const validCode = normalizeReferralCode(code);
+  if (!validCode) redirect(`/ref/${encodeURIComponent(validSlug)}/invalid?error=invalid`);
+
+  const path = legacyReferralInvitePath(validSlug, validCode);
+  const { supabase } = await requireUser();
+  const { data, error } = await supabase.rpc("accept_referral_invite_legacy", { p_code: validCode });
+  if (error) redirect(`${path}?error=${referralErrorCode(error.message)}`);
+
+  const result = data as { program_id?: string; slug?: string; membership_status?: string } | null;
+  if (!result?.program_id || result.slug !== validSlug) redirect(`${path}?error=invalid`);
+
+  const canonical = referralInvitePath(result.program_id, validSlug, validCode);
+  revalidatePath(`/programs/${validSlug}`);
+  revalidatePath(`/programs/${validSlug}/growth`);
+  revalidatePath("/wallet");
+  revalidatePath("/home");
+
+  if (result.membership_status === "pending") redirect(`${canonical}?status=pending`);
   redirect(`/programs/${validSlug}/growth#referral`);
 }
 
