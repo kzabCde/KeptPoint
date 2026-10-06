@@ -18,6 +18,7 @@ import {
   Zap,
 } from "lucide-react";
 import { AnimatedCounter } from "@/components/landing/animated-counter";
+import { GrowthLoyaltyPreview } from "@/components/landing/growth-loyalty-preview";
 import { HeroProductWorkspace } from "@/components/landing/hero-product-workspace";
 import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { ProductDemo } from "@/components/landing/product-demo";
@@ -70,23 +71,14 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
           <div className="landing-reveal flex flex-col justify-center rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8 lg:col-span-4">
             <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-[#E6FAF6] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[.12em] text-[#087F6E]"><Sparkles className="size-3" /> PumpPoint</div>
             <h1 className="max-w-md text-[clamp(2rem,4vw,3rem)] font-semibold leading-[1.02] tracking-[-0.055em]">{t.hero.title}</h1>
-            <p className="mt-4 max-w-md text-sm leading-6 text-slate-500 sm:text-base dark:text-slate-400">
-              {t.hero.description}
-            </p>
+            <p className="mt-4 max-w-md text-sm leading-6 text-slate-500 sm:text-base dark:text-slate-400">{t.hero.description}</p>
             <div className="mt-6 flex flex-col gap-2 min-[430px]:flex-row lg:flex-col 2xl:flex-row">
-              <Link href="/signup" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#10C9A7] px-4 text-sm font-bold text-[#0F2D46] transition hover:-translate-y-px hover:bg-[#0EB99A]">
-                {t.hero.getStarted}<ArrowRight className="size-4" />
-              </Link>
-              <Link href="#how" className="inline-flex min-h-11 items-center justify-center gap-1 rounded-xl px-3 text-sm font-bold text-[#0F2D46] transition hover:bg-slate-50 dark:text-white dark:hover:bg-white/5">
-                {t.hero.seeHow}<ArrowRight className="size-3.5" />
-              </Link>
+              <Link href="/signup" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#10C9A7] px-4 text-sm font-bold text-[#0F2D46] transition hover:-translate-y-px hover:bg-[#0EB99A]">{t.hero.getStarted}<ArrowRight className="size-4" /></Link>
+              <Link href="#how" className="inline-flex min-h-11 items-center justify-center gap-1 rounded-xl px-3 text-sm font-bold text-[#0F2D46] transition hover:bg-slate-50 dark:text-white dark:hover:bg-white/5">{t.hero.seeHow}<ArrowRight className="size-3.5" /></Link>
             </div>
             <p className="mt-5 flex items-center gap-2 text-[11px] font-medium text-slate-400"><Check className="size-3.5 text-[#10C9A7]" />{t.hero.proof}</p>
           </div>
-
-          <div className="landing-reveal min-w-0 lg:col-span-8">
-            <HeroProductWorkspace locale={locale} />
-          </div>
+          <div className="landing-reveal min-w-0 lg:col-span-8"><HeroProductWorkspace locale={locale} /></div>
         </div>
       </section>
 
@@ -153,6 +145,8 @@ export default async function LandingPage({ searchParams }: { searchParams: Prom
           </div>
         </div>
       </section>
+
+      <GrowthLoyaltyPreview locale={locale} />
 
       <section className="landing-section mx-auto grid max-w-7xl items-center gap-12 px-5 py-24 sm:px-8 lg:grid-cols-[.82fr_1.18fr]">
         <div className="landing-reveal"><p className="landing-eyebrow">{t.analytics.eyebrow}</p><h2 className="landing-heading">{t.analytics.title}</h2><p className="landing-subheading">{t.analytics.description}</p></div>
