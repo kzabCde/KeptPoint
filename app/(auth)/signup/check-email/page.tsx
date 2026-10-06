@@ -3,14 +3,17 @@ import { Check, KeyRound, MailCheck, UserRound } from "lucide-react";
 import { resendConfirmation } from "@/app/actions/auth";
 import { Brand } from "@/components/brand";
 import { PendingSubmitButton } from "@/components/pending-submit-button";
+import { safeNextPath } from "@/lib/auth-flow";
 import { getLocale } from "@/lib/preferences";
 
 export const metadata = { title: "Check your email" };
 
-export default async function CheckEmailPage({ searchParams }: { searchParams: Promise<{ status?: string; error?: string }> }) {
+export default async function CheckEmailPage({ searchParams }: { searchParams: Promise<{ status?: string; error?: string; next?: string }> }) {
   const locale = await getLocale();
-  const { status, error } = await searchParams;
+  const { status, error, next: requestedNext } = await searchParams;
+  const next = safeNextPath(requestedNext, "/home");
   const th = locale === "th";
+  const loginHref = next === "/home" ? "/login" : `/login?next=${encodeURIComponent(next)}`;
 
   return (
     <main className="auth-canvas min-h-dvh px-5 py-8">
@@ -19,7 +22,7 @@ export default async function CheckEmailPage({ searchParams }: { searchParams: P
         <section className="cute-card mt-7 p-6 sm:p-7">
           <div className="grid size-16 place-items-center rounded-[22px] bg-lavender-soft text-violet-700 dark:text-violet-200"><MailCheck className="size-8"/></div>
           <h1 className="mt-5 text-3xl font-semibold tracking-[-0.045em]">{th ? "เช็กอีเมลของคุณ ✉️" : "Check your email ✉️"}</h1>
-          <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{th ? "เราได้ส่งลิงก์ยืนยันการสร้างบัญชีแล้ว กดลิงก์เพียงครั้งเดียวเพื่อยืนยันอีเมลและเข้าสู่ Home" : "We sent an account verification link. Open it once to verify your email and continue to Home."}</p>
+          <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{th ? "เราได้ส่งลิงก์ยืนยันการสร้างบัญชีแล้ว กดลิงก์เพียงครั้งเดียวเพื่อยืนยันอีเมลและไปต่อยังหน้าที่คุณกำลังใช้งาน" : "We sent an account verification link. Open it once to verify your email and continue where you left off."}</p>
 
           <div className="mt-6 grid gap-2">
             <div className="flex items-center gap-3 rounded-2xl bg-mint-soft px-4 py-3"><span className="grid size-8 shrink-0 place-items-center rounded-full bg-emerald-600 text-white"><Check className="size-4"/></span><div><p className="text-sm font-semibold">{th ? "1. Username + Email + Password พร้อมแล้ว" : "1. Username + Email + Password ready"}</p><p className="text-xs text-zinc-600 dark:text-zinc-300">{th ? "ข้อมูลล็อกอินถูกกำหนดตั้งแต่ตอนสมัคร" : "Your sign-in credentials were set during signup."}</p></div></div>
@@ -31,10 +34,11 @@ export default async function CheckEmailPage({ searchParams }: { searchParams: P
           {error && <p role="alert" className="mt-5 rounded-2xl bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700 dark:bg-rose-950/30 dark:text-rose-200">{error === "email-rate-limit" ? (th ? "ส่งอีเมลบ่อยเกินขีดจำกัด กรุณารอสักครู่ก่อนส่งซ้ำ" : "Email sending is temporarily rate-limited. Wait a little before resending.") : (th ? "ส่งลิงก์ซ้ำไม่สำเร็จ กรุณาลองใหม่ภายหลัง" : "Could not resend the verification link. Try again later.")}</p>}
 
           <form action={resendConfirmation} className="mt-6 grid gap-3">
+            <input type="hidden" name="next" value={next}/>
             <input name="email" type="email" required placeholder={th ? "อีเมลที่ใช้สมัคร" : "Signup email"} className="cute-input h-12 px-4 outline-none"/>
             <PendingSubmitButton pendingLabel={th ? "กำลังส่ง…" : "Sending…"} className="cute-secondary h-12 rounded-2xl font-semibold">{th ? "ส่งลิงก์ยืนยันอีกครั้ง" : "Resend verification link"}</PendingSubmitButton>
           </form>
-          <Link href="/login" className="mt-4 flex min-h-11 items-center justify-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300"><UserRound className="size-4"/>{th ? "กลับไปหน้าเข้าสู่ระบบ" : "Back to sign in"}</Link>
+          <Link href={loginHref} className="mt-4 flex min-h-11 items-center justify-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300"><UserRound className="size-4"/>{th ? "กลับไปหน้าเข้าสู่ระบบ" : "Back to sign in"}</Link>
         </section>
       </div>
     </main>
