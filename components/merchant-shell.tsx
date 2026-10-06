@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, BarChart3, Bell, ChevronDown, Gift, LayoutDashboard, Menu, Settings, Sparkles, Target, UserRound, UsersRound, WalletCards } from "lucide-react";
+import { ArrowLeft, BarChart3, Bell, Gift, LayoutDashboard, Menu, Settings, Sparkles, Target, UserRound, UsersRound, WalletCards } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { WorkspaceSwitcher } from "@/components/workspace-switcher";
 import type { Locale } from "@/lib/i18n";
