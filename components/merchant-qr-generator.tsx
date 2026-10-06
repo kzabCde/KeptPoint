@@ -21,22 +21,32 @@ export function MerchantQrGenerator({ programId, programType, locale }: { progra
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  function resetGenerated() {
     setDataUrl("");
     setScanUrl("");
     setExpiresAt(0);
     setSecondsLeft(0);
     setCopied(false);
     setError("");
-  }, [action, amount]);
+  }
 
   useEffect(() => {
     if (!expiresAt) return;
-    const tick = () => setSecondsLeft(Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000)));
-    tick();
-    const timer = window.setInterval(tick, 1000);
+    const timer = window.setInterval(() => {
+      setSecondsLeft(Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000)));
+    }, 1000);
     return () => window.clearInterval(timer);
   }, [expiresAt]);
+
+  function changeAction(next: QrAction) {
+    resetGenerated();
+    setAction(next);
+  }
+
+  function changeAmount(next: number) {
+    resetGenerated();
+    setAmount(next);
+  }
 
   async function generate() {
     setBusy(true);
@@ -56,10 +66,13 @@ export function MerchantQrGenerator({ programId, programType, locale }: { progra
       const ttl = Number(result.expires_in ?? (action === "join" ? 3600 : 90));
       setScanUrl(url);
       setDataUrl(image);
+      setSecondsLeft(ttl);
       setExpiresAt(Date.now() + ttl * 1000);
     } catch {
       setDataUrl("");
       setScanUrl("");
+      setSecondsLeft(0);
+      setExpiresAt(0);
       setError(th ? "สร้าง QR ไม่สำเร็จ กรุณาตรวจสิทธิ์ของบัญชีและการตั้งค่าโปรแกรมแล้วลองใหม่" : "Could not create the QR. Check your program permissions and settings, then try again.");
     } finally {
       setBusy(false);
@@ -86,8 +99,8 @@ export function MerchantQrGenerator({ programId, programType, locale }: { progra
     <section className="cute-card p-5 shadow-none">
       <h2 className="font-semibold">{th ? "ตั้งค่า QR" : "QR setup"}</h2>
       <p className="mt-1 text-sm leading-6 text-slate-500">{expiryLabel}</p>
-      <label className="mt-5 grid gap-2 text-sm font-semibold">{th ? "การทำงาน" : "Action"}<select value={action} onChange={(event) => setAction(event.target.value as QrAction)} className="cute-input h-12 px-3 outline-none">{options.filter((option) => option.allowed).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
-      {action !== "join" && <label className="mt-4 grid gap-2 text-sm font-semibold">{action === "earn_points" ? (th ? "จำนวนแต้ม" : "Points") : (th ? "จำนวนสแตมป์" : "Stamps")}<input value={amount} onChange={(event) => setAmount(Math.max(1, Number(event.target.value) || 1))} type="number" min="1" max={action === "earn_points" ? 1000000 : 100} className="cute-input h-12 px-4 outline-none" /></label>}
+      <label className="mt-5 grid gap-2 text-sm font-semibold">{th ? "การทำงาน" : "Action"}<select value={action} onChange={(event) => changeAction(event.target.value as QrAction)} className="cute-input h-12 px-3 outline-none">{options.filter((option) => option.allowed).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
+      {action !== "join" && <label className="mt-4 grid gap-2 text-sm font-semibold">{action === "earn_points" ? (th ? "จำนวนแต้ม" : "Points") : (th ? "จำนวนสแตมป์" : "Stamps")}<input value={amount} onChange={(event) => changeAmount(Math.max(1, Number(event.target.value) || 1))} type="number" min="1" max={action === "earn_points" ? 1000000 : 100} className="cute-input h-12 px-4 outline-none" /></label>}
       <button type="button" onClick={generate} disabled={busy} className="cute-primary mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl font-bold disabled:opacity-50">{busy ? <RefreshCw className="size-4 animate-spin" /> : <QrCode className="size-4" />}{dataUrl ? (th ? "สร้าง QR ใหม่" : "Generate new QR") : (th ? "สร้าง QR" : "Generate QR")}</button>
       {error && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950/30 dark:text-red-200">{error}</p>}
     </section>
