@@ -11,7 +11,7 @@ async function requireProgramManager(programId: string) {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) throw new Error("authentication required");
-  const { data: program } = await supabase.from("programs").select("owner_id,program_type").eq("id", programId).maybeSingle();
+  const { data: program } = await supabase.from("programs").select("owner_id,program_type,currency_name").eq("id", programId).maybeSingle();
   if (!program) throw new Error("program not found");
   if (program.owner_id !== auth.user.id) {
     const { data: staff } = await supabase.from("program_staff").select("role").eq("program_id", programId).eq("user_id", auth.user.id).maybeSingle();
@@ -24,7 +24,7 @@ export async function saveLoyaltySettings(formData: FormData) {
   const input = z.object({
     programId: uuid,
     slug: slugSchema,
-    currencyName: z.string().trim().min(1).max(30),
+    currencyName: z.string().trim().min(1).max(30).optional(),
     allowPointTransfer: z.boolean(),
     pointRedemptionEnabled: z.boolean(),
     pointTierEnabled: z.boolean(),
@@ -37,7 +37,7 @@ export async function saveLoyaltySettings(formData: FormData) {
   }).parse({
     programId: formData.get("programId"),
     slug: formData.get("slug"),
-    currencyName: formData.get("currencyName"),
+    currencyName: formData.get("currencyName") || undefined,
     allowPointTransfer: formData.get("allowPointTransfer") === "on",
     pointRedemptionEnabled: formData.get("pointRedemptionEnabled") === "on",
     pointTierEnabled: formData.get("pointTierEnabled") === "on",
@@ -54,7 +54,7 @@ export async function saveLoyaltySettings(formData: FormData) {
   const stampsCapable = program.program_type === "stamps" || program.program_type === "hybrid";
 
   const { error: programError } = await supabase.from("programs").update({
-    currency_name: input.currencyName,
+    currency_name: input.currencyName ?? program.currency_name,
     allow_point_transfer: pointsCapable && input.allowPointTransfer,
     point_redemption_enabled: pointsCapable && input.pointRedemptionEnabled,
     point_tier_enabled: pointsCapable && input.pointTierEnabled,
