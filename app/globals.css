@@ -274,6 +274,7 @@ img, video, svg { max-width: 100%; }
 }
 .hero-data-pulse { animation: hero-data-pulse .65s ease-out both; }
 .hero-stamp-pop { animation: hero-stamp-pop .5s cubic-bezier(.2,.85,.25,1.25) both; }
+.hero-qr-scan { animation: hero-qr-scan 1.25s ease-in-out infinite alternate; }
 .landing-eyebrow {
   color: #087f6e;
   font-size: .75rem;
@@ -373,6 +374,11 @@ img, video, svg { max-width: 100%; }
   100% { transform: scale(1) rotate(0); }
 }
 
+@keyframes hero-qr-scan {
+  from { top: 22%; opacity: .55; }
+  to { top: 76%; opacity: 1; }
+}
+
 @keyframes landing-demo-enter {
   from { opacity: 0; transform: translateY(7px); }
   to { opacity: 1; transform: translateY(0); }
@@ -415,6 +421,25 @@ img, video, svg { max-width: 100%; }
   @keyframes stamp-pop {
     from { transform: scale(.88) rotate(-5deg); opacity: .72; }
     to { transform: scale(1) rotate(0); opacity: 1; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .landing-float,
+  .landing-demo-state,
+  .landing-chart-line,
+  .landing-reveal,
+  .hero-data-pulse,
+  .hero-stamp-pop,
+  .hero-qr-scan {
+    animation: none !important;
+  }
+  .landing-bento,
+  .landing-audience-card,
+  .hero-workspace,
+  .hero-workspace * {
+    transition-duration: .01ms !important;
   }
 }
 

@@ -1,6 +1,6 @@
 import "server-only";
-import { cookies } from "next/headers";
-import type { Locale } from "@/lib/i18n";
+import { cookies, headers } from "next/headers";
+import { localeFromAcceptLanguage, type Locale } from "@/lib/i18n";
 
 export type ThemePreference = "system" | "light" | "dark";
 
@@ -19,8 +19,11 @@ export async function getPreferences() {
   const store = await cookies();
   const rawLocale = store.get(LOCALE_COOKIE)?.value;
   const rawTheme = store.get(THEME_COOKIE)?.value;
+  const locale = isLocale(rawLocale)
+    ? rawLocale
+    : localeFromAcceptLanguage((await headers()).get("accept-language"));
   return {
-    locale: isLocale(rawLocale) ? rawLocale : "th",
+    locale,
     theme: isTheme(rawTheme) ? rawTheme : "system",
   } as const;
 }

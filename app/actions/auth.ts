@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { isLocale, isTheme, setPreferenceCookies } from "@/lib/preferences";
+import { getLocale, isLocale, isTheme, setPreferenceCookies } from "@/lib/preferences";
 import { canonicalAuthOrigin, postAuthDestination } from "@/lib/auth-flow";
 import { isEmailSendRateLimit } from "@/lib/auth-errors";
 
@@ -72,13 +72,14 @@ export async function signUpWithEmail(formData: FormData) {
   if (!parsed.success) redirect("/signup?error=invalid-fields");
 
   const origin = await appOrigin();
+  const locale = await getLocale();
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
       emailRedirectTo: `${origin}/auth/complete`,
-      data: { desired_username: parsed.data.username },
+      data: { desired_username: parsed.data.username, locale },
     },
   });
 
