@@ -8,12 +8,14 @@ export default async function GrowthManagePage({ params }: { params: Promise<{ s
   const { slug } = await params;
   const th = (await getLocale()) === "th";
   const supabase = await createClient();
-  const { data: program } = await supabase.from("programs").select("id,name").eq("slug", slug).single();
+  const { data: program } = await supabase.from("programs").select("id,name").eq("slug", slug).maybeSingle();
+  if (!program) return <main className="p-6 text-sm text-zinc-500">{th ? "ไม่พบโปรแกรมนี้" : "Program not found."}</main>;
+
   const [settingsResult, couponsResult, tiersResult, claimsResult] = await Promise.all([
     supabase.from("program_referral_settings").select("enabled,referrer_bonus,referred_bonus").eq("program_id", program.id).maybeSingle(),
     supabase.from("coupons").select("id,code,name,description,discount_type,discount_value,max_redemptions,max_per_user,expires_at,active").eq("program_id", program.id).order("created_at", { ascending: false }),
     supabase.from("program_tiers").select("id,name,min_lifetime_earned,benefits,active").eq("program_id", program.id).order("min_lifetime_earned"),
-    supabase.from("coupon_redemptions").select("id,status,claimed_at,coupons(name,code),profiles:user_id(username,display_name)").eq("program_id", program.id).eq("status", "claimed").order("claimed_at", { ascending: false }).limit(20),
+    supabase.from("coupon_redemptions").select("id,status,claimed_at,coupons(name,code),profiles!coupon_redemptions_user_id_fkey(username,display_name)").eq("program_id", program.id).eq("status", "claimed").order("claimed_at", { ascending: false }).limit(20),
   ]);
   const settings = settingsResult.data ?? { enabled: false, referrer_bonus: 50, referred_bonus: 50 };
   const coupons = couponsResult.data ?? [];
