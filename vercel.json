@@ -8,7 +8,8 @@
       "fix/passwordless-signup-v0.1.3": false,
       "feat/v0.1.4-hybrid-auth-cute-ui": false,
       "fix/email-confirm-redirect": false,
-      "feat/landing-loop-language-selector": false
+      "feat/landing-loop-language-selector": false,
+      "feat/growth-loyalty-preview": false
     }
   }
 }
