@@ -19,6 +19,14 @@ function desiredLocale(user: User | null) {
   return isLocale(metadata?.locale) ? metadata.locale : null;
 }
 
+function onboardingTarget(request: NextRequest, requestedNext: string, error?: string) {
+  const target = new URL("/onboarding", request.url);
+  if (error) target.searchParams.set("error", error);
+  target.searchParams.set("confirmed", "1");
+  if (requestedNext !== "/home") target.searchParams.set("next", requestedNext);
+  return target;
+}
+
 export async function GET(request: NextRequest) {
   const requestedNext = safeNextPath(request.nextUrl.searchParams.get("next"), "/home");
   const supabase = await createClient();
@@ -66,7 +74,7 @@ export async function GET(request: NextRequest) {
     if (!saveError && saved?.username) {
       username = saved.username;
     } else if (saveError?.code === "23505") {
-      const response = NextResponse.redirect(new URL("/onboarding?error=username-taken&confirmed=1", request.url));
+      const response = NextResponse.redirect(onboardingTarget(request, requestedNext, "username-taken"));
       response.headers.set("Cache-Control", "private, no-store");
       return response;
     }
@@ -78,7 +86,7 @@ export async function GET(request: NextRequest) {
 
   const destination = postAuthDestination({ username }, requestedNext);
   const target = new URL(destination, request.url);
-  if (destination === "/onboarding") target.searchParams.set("confirmed", "1");
+  if (target.pathname === "/onboarding") target.searchParams.set("confirmed", "1");
 
   const response = NextResponse.redirect(target);
   response.headers.set("Cache-Control", "private, no-store");

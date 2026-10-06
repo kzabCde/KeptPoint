@@ -3,19 +3,28 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { safeNextPath } from "@/lib/auth-flow";
 import { createClient } from "@/lib/supabase/server";
 
 const schema = z.object({
   username: z.string().trim().toLowerCase().regex(/^[a-z0-9_]{3,30}$/),
+  next: z.string().optional(),
 });
 
+function onboardingPath(error: string, next: string) {
+  const query = new URLSearchParams({ error });
+  if (next !== "/home") query.set("next", next);
+  return `/onboarding?${query.toString()}`;
+}
+
 export async function completeOnboarding(formData: FormData) {
-  const parsed = schema.safeParse({ username: formData.get("username") });
-  if (!parsed.success) redirect("/onboarding?error=invalid-profile");
+  const next = safeNextPath(String(formData.get("next") ?? ""), "/home");
+  const parsed = schema.safeParse({ username: formData.get("username"), next });
+  if (!parsed.success) redirect(onboardingPath("invalid-profile", next));
 
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) redirect("/login?status=session-required");
+  if (!auth.user) redirect(`/login?status=session-required${next !== "/home" ? `&next=${encodeURIComponent(next)}` : ""}`);
 
   const { data: current } = await supabase
     .from("profiles")
@@ -36,12 +45,12 @@ export async function completeOnboarding(formData: FormData) {
     .maybeSingle();
 
   if (error) {
-    if (error.code === "23505") redirect("/onboarding?error=username-taken");
-    redirect("/onboarding?error=save-failed");
+    if (error.code === "23505") redirect(onboardingPath("username-taken", next));
+    redirect(onboardingPath("save-failed", next));
   }
-  if (!data) redirect("/onboarding?error=profile-missing");
+  if (!data) redirect(onboardingPath("profile-missing", next));
 
   revalidatePath("/home");
   revalidatePath("/profile");
-  redirect("/home?onboarding=complete");
+  redirect(next === "/home" ? "/home?onboarding=complete" : next);
 }

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { normalizeReferralCode, referralInvitePath } from "@/lib/share-links";
 import { createClient } from "@/lib/supabase/server";
 
 async function requireUser() {
@@ -14,6 +15,16 @@ async function requireUser() {
 
 const uuid = z.string().uuid();
 const slugSchema = z.string().min(1).max(100);
+
+function referralErrorCode(message: string) {
+  const value = message.toLowerCase();
+  if (value.includes("cannot refer yourself")) return "self";
+  if (value.includes("before first earning") || value.includes("earning activity")) return "too-late";
+  if (value.includes("already claimed")) return "already-claimed";
+  if (value.includes("blocked")) return "blocked";
+  if (value.includes("disabled")) return "disabled";
+  return "invalid";
+}
 
 export async function saveReferralSettings(formData: FormData) {
   const input = z.object({
@@ -61,6 +72,28 @@ export async function claimReferral(programId: string, slug: string, formData: F
   const { error } = await supabase.rpc("claim_referral", { p_program_id: input.programId, p_code: input.code.toUpperCase() });
   if (error) throw new Error(error.message);
   revalidatePath(`/programs/${input.slug}/growth`);
+}
+
+export async function acceptReferralInvite(code: string, slug: string, _formData?: FormData) {
+  const validSlug = slugSchema.parse(slug);
+  const validCode = normalizeReferralCode(code);
+  if (!validCode) redirect(`/ref/${encodeURIComponent(validSlug)}/invalid?error=invalid`);
+
+  const path = referralInvitePath(validSlug, validCode);
+  const { supabase } = await requireUser();
+  const { data, error } = await supabase.rpc("accept_referral_invite", { p_code: validCode });
+  if (error) redirect(`${path}?error=${referralErrorCode(error.message)}`);
+
+  const result = data as { slug?: string; membership_status?: string } | null;
+  if (!result?.slug || result.slug !== validSlug) redirect(`${path}?error=invalid`);
+
+  revalidatePath(`/programs/${validSlug}`);
+  revalidatePath(`/programs/${validSlug}/growth`);
+  revalidatePath("/wallet");
+  revalidatePath("/home");
+
+  if (result.membership_status === "pending") redirect(`${path}?status=pending`);
+  redirect(`/programs/${validSlug}/growth#referral`);
 }
 
 export async function createCoupon(formData: FormData) {

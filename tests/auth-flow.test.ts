@@ -4,6 +4,14 @@ import { authCompletionPathFromLanding, canonicalAuthOrigin, postAuthDestination
 import { isEmailSendRateLimit } from "../lib/auth-errors.ts";
 
 test("missing username goes to onboarding",()=>assert.equal(postAuthDestination({ username:null },"/home"),"/onboarding"));
+test("missing username preserves a safe referral destination",()=>assert.equal(
+  postAuthDestination({ username:null },"/ref/coffee-club/ABC12345"),
+  "/onboarding?next=%2Fref%2Fcoffee-club%2FABC12345",
+));
+test("missing username preserves a QR scan destination",()=>assert.equal(
+  postAuthDestination({ username:null },"/scan?token="+"a".repeat(64)),
+  "/onboarding?next=%2Fscan%3Ftoken%3D"+"a".repeat(64),
+));
 test("verified accounts with username go directly home",()=>assert.equal(postAuthDestination({ username:"kept_user" },"/home"),"/home"));
 test("verified accounts respect a safe app next path",()=>assert.equal(postAuthDestination({ username:"kept_user" },"/wallet"),"/wallet"));
 test("unsafe external next paths fall back to home",()=>assert.equal(safeNextPath("//evil.example"),"/home"));

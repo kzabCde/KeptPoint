@@ -10,7 +10,8 @@
       "feat/landing-loop-language-selector": false,
       "feat/growth-loyalty-preview": false,
       "feat/personal-business-product-redesign": false,
-      "feat/growth-referral-coupons-tiers": false
+      "feat/growth-referral-coupons-tiers": false,
+      "fix/referral-qr-production-flow": false
     }
   }
 }

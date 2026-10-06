@@ -44,6 +44,9 @@ export function postAuthDestination(
   state: AccountSetupState,
   requested?: string | null,
 ) {
-  if (!state.username) return "/onboarding";
-  return safeNextPath(requested, "/home");
+  const next = safeNextPath(requested, "/home");
+  if (!state.username) {
+    return next === "/home" ? "/onboarding" : `/onboarding?next=${encodeURIComponent(next)}`;
+  }
+  return next;
 }

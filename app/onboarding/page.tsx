@@ -4,6 +4,7 @@ import { AtSign, Check, KeyRound, MailCheck, UserRoundCheck } from "lucide-react
 import { completeOnboarding } from "@/app/actions/onboarding";
 import { Brand } from "@/components/brand";
 import { PendingSubmitButton } from "@/components/pending-submit-button";
+import { safeNextPath } from "@/lib/auth-flow";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale } from "@/lib/preferences";
 
@@ -16,15 +17,16 @@ const errors = {
   "profile-missing": { th: "ไม่พบโปรไฟล์สมาชิก กรุณาออกจากระบบแล้วลองอีกครั้ง", en: "Member profile was not found. Sign out and try again." },
 } as const;
 
-export default async function OnboardingPage({ searchParams }: { searchParams: Promise<{ error?: keyof typeof errors; confirmed?: string }> }) {
+export default async function OnboardingPage({ searchParams }: { searchParams: Promise<{ error?: keyof typeof errors; confirmed?: string; next?: string }> }) {
   const locale = await getLocale();
-  const { error, confirmed } = await searchParams;
+  const { error, confirmed, next: requestedNext } = await searchParams;
+  const next = safeNextPath(requestedNext, "/home");
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) redirect("/login?status=session-required");
+  if (!auth.user) redirect(`/login?status=session-required${next !== "/home" ? `&next=${encodeURIComponent(next)}` : ""}`);
 
   const { data: profile } = await supabase.from("profiles").select("username,password_set").eq("id", auth.user.id).maybeSingle();
-  if (profile?.username) redirect("/home");
+  if (profile?.username) redirect(next);
 
   const metadata = auth.user.user_metadata as Record<string, unknown>;
   const store = await cookies();
@@ -52,8 +54,9 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
 
           <div className="mt-5 rounded-2xl bg-zinc-50 px-4 py-3 dark:bg-white/5"><p className="text-xs text-zinc-500">{th ? "อีเมล" : "Email"}</p><p className="mt-1 break-all text-sm font-semibold">{auth.user.email}</p></div>
           <form action={completeOnboarding} className="mt-5 grid gap-4">
+            <input type="hidden" name="next" value={next}/>
             <label className="grid gap-2 text-sm font-semibold">Username<div className="cute-input flex items-center gap-2 px-4"><AtSign className="size-4 text-emerald-600"/><input name="username" defaultValue={desiredUsername} required minLength={3} maxLength={30} autoCapitalize="none" autoCorrect="off" spellCheck={false} className="h-12 min-w-0 flex-1 bg-transparent outline-none"/></div><span className="text-xs font-normal text-zinc-500">{th ? "ใช้ a–z, ตัวเลข และ _ จำนวน 3–30 ตัว" : "Use a-z, numbers and _; 3–30 characters."}</span></label>
-            <PendingSubmitButton pendingLabel={th ? "กำลังบันทึก…" : "Saving…"} className="cute-primary h-12 rounded-2xl font-semibold">{th ? "บันทึก Username และไปหน้าหลัก" : "Save username & continue"}</PendingSubmitButton>
+            <PendingSubmitButton pendingLabel={th ? "กำลังบันทึก…" : "Saving…"} className="cute-primary h-12 rounded-2xl font-semibold">{next === "/home" ? (th ? "บันทึก Username และไปหน้าหลัก" : "Save username & continue") : (th ? "บันทึก Username และทำรายการต่อ" : "Save username & continue flow")}</PendingSubmitButton>
           </form>
         </section>
       </div>

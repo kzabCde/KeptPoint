@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { normalizeQrToken } from "@/lib/share-links";
 import { createProgramSchema, issueAmountSchema } from "@/lib/validation/program";
 
 async function requireUser() {
@@ -140,27 +141,52 @@ export async function cancelRedemption(redemptionId: string) {
   revalidatePath("/activity");
 }
 
+const qrSessionSchema = z.object({
+  programId: z.string().uuid(),
+  action: z.enum(["join", "earn_points", "earn_stamp"]),
+  amount: z.number().int().positive().optional(),
+}).superRefine((value, ctx) => {
+  if (value.action === "earn_points" && (value.amount == null || value.amount > 1_000_000)) {
+    ctx.addIssue({ code: "custom", path: ["amount"], message: "points amount must be between 1 and 1000000" });
+  }
+  if (value.action === "earn_stamp" && (value.amount == null || value.amount > 100)) {
+    ctx.addIssue({ code: "custom", path: ["amount"], message: "stamp amount must be between 1 and 100" });
+  }
+});
+
 export async function createQrSession(programId: string, action: "join" | "earn_points" | "earn_stamp", amount?: number) {
+  const input = qrSessionSchema.parse({ programId, action, amount });
   const { supabase } = await requireUser();
-  const payload = amount ? { amount } : {};
+  const payload = input.action === "join" ? {} : { amount: input.amount };
   const { data, error } = await supabase.rpc("create_qr_session", {
-    p_program_id: programId,
-    p_action: action,
+    p_program_id: input.programId,
+    p_action: input.action,
     p_payload: payload,
-    p_ttl_seconds: 90,
+    p_ttl_seconds: input.action === "join" ? 3600 : 90,
   });
   if (error) throw new Error(error.message);
   return data;
 }
 
-export async function acceptQrToken(formData: FormData) {
-  const token = z.string().trim().min(16).max(256).parse(formData.get("token"));
-  const { supabase } = await requireUser();
-  const { error } = await supabase.rpc("accept_qr_session", { p_token: token });
-  if (error) throw new Error(error.message);
-  redirect("/activity?qr=success");
+function qrErrorCode(message: string) {
+  const value = message.toLowerCase();
+  if (value.includes("expired")) return "expired";
+  if (value.includes("already used")) return "used";
+  if (value.includes("own qr")) return "own";
+  if (value.includes("member not active")) return "membership";
+  return "invalid";
 }
 
+export async function acceptQrToken(formData: FormData) {
+  const raw = z.string().trim().min(1).max(512).parse(formData.get("token"));
+  const token = normalizeQrToken(raw);
+  if (!token) redirect("/scan?qr=invalid");
+
+  const { supabase } = await requireUser();
+  const { error } = await supabase.rpc("accept_qr_session", { p_token: token });
+  if (error) redirect(`/scan?qr=${qrErrorCode(error.message)}`);
+  redirect("/activity?qr=success");
+}
 
 export async function issuePointsForm(formData: FormData) {
   const programId = String(formData.get("programId") ?? "");
