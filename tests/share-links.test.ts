@@ -26,8 +26,8 @@ test("QR entry path carries the real token", () => {
 
 test("referral links are scoped by store id", () => {
   assert.equal(normalizeReferralCode(" ab12cd34 "), "AB12CD34");
-  assert.equal(referralInvitePath(storeA, "coffee-club", "ab12cd34"), `/ref/${storeA}/coffee-club/AB12CD34`);
-  assert.equal(referralInvitePath(storeB, "coffee-club", "ab12cd34"), `/ref/${storeB}/coffee-club/AB12CD34`);
+  assert.equal(referralInvitePath(storeA, "coffee-club", "ab12cd34"), `/ref/store/${storeA}/coffee-club/AB12CD34`);
+  assert.equal(referralInvitePath(storeB, "coffee-club", "ab12cd34"), `/ref/store/${storeB}/coffee-club/AB12CD34`);
   assert.notEqual(referralInvitePath(storeA, "coffee-club", "AB12CD34"), referralInvitePath(storeB, "coffee-club", "AB12CD34"));
 });
 
