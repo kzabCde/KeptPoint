@@ -36,7 +36,7 @@ export function referralInvitePath(programId: string, slug: string, code: string
   if (!UUID_RE.test(programId) || !SLUG_RE.test(slug) || !normalizedCode) {
     throw new Error("invalid referral link parameters");
   }
-  return `/ref/${encodeURIComponent(programId.toLowerCase())}/${encodeURIComponent(slug)}/${encodeURIComponent(normalizedCode)}`;
+  return `/ref/store/${encodeURIComponent(programId.toLowerCase())}/${encodeURIComponent(slug)}/${encodeURIComponent(normalizedCode)}`;
 }
 
 export function legacyReferralInvitePath(slug: string, code: string): string {
