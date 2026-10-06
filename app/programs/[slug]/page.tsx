@@ -84,7 +84,8 @@ export default async function ProgramPage({ params }: { params: Promise<{ slug: 
         </div>
       </section>
 
-      <Link href="/scan" className="cute-secondary mt-6 flex min-h-12 items-center justify-center gap-2 rounded-2xl p-4 text-sm font-semibold"><QrCode className="size-4 text-emerald-600"/>{m.scan}</Link>
+      {member?.status === "active" && <Link href={`/programs/${slug}/growth`} className="cute-secondary mt-6 flex min-h-12 items-center justify-center gap-2 rounded-2xl p-4 text-sm font-semibold"><Sparkles className="size-4 text-emerald-600"/>{th ? "Referral, คูปอง และระดับสมาชิก" : "Referrals, coupons & member tiers"}</Link>}
+      <Link href="/scan" className="cute-secondary mt-3 flex min-h-12 items-center justify-center gap-2 rounded-2xl p-4 text-sm font-semibold"><QrCode className="size-4 text-emerald-600"/>{m.scan}</Link>
     </main>
   );
 }
