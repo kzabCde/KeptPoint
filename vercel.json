@@ -9,7 +9,8 @@
       "fix/email-confirm-redirect": false,
       "feat/landing-loop-language-selector": false,
       "feat/growth-loyalty-preview": false,
-      "feat/personal-business-product-redesign": false
+      "feat/personal-business-product-redesign": false,
+      "feat/growth-referral-coupons-tiers": false
     }
   }
 }
