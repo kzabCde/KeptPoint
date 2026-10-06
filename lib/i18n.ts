@@ -1,5 +1,26 @@
 export type Locale = "th" | "en";
 
+export function localeFromAcceptLanguage(value: string | null | undefined): Locale {
+  if (!value) return "th";
+
+  const choices = value
+    .split(",")
+    .map((part, index) => {
+      const [tag = "", ...params] = part.trim().toLowerCase().split(";");
+      const qParam = params.find((param) => param.trim().startsWith("q="));
+      const quality = qParam ? Number.parseFloat(qParam.trim().slice(2)) : 1;
+      return { tag, quality: Number.isFinite(quality) ? quality : 0, index };
+    })
+    .sort((a, b) => b.quality - a.quality || a.index - b.index);
+
+  for (const choice of choices) {
+    if (choice.quality <= 0) continue;
+    const base = choice.tag.split("-")[0];
+    if (base === "th" || base === "en") return base;
+  }
+  return "th";
+}
+
 export const messages = {
   th: {
     nav: { home: "หน้าหลัก", wallet: "วอลเล็ต", scan: "สแกน", activity: "กิจกรรม", profile: "โปรไฟล์" },

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { setPreferenceCookies } from "@/lib/preferences";
+import { getPreferences, setPreferenceCookies } from "@/lib/preferences";
 
 const schema = z.object({
   locale: z.enum(["th", "en"]),
@@ -20,6 +20,25 @@ export async function savePreferences(input: { locale: "th" | "en"; theme: "syst
     const { error } = await supabase
       .from("profiles")
       .update({ locale: value.locale, theme: value.theme, updated_at: new Date().toISOString() })
+      .eq("id", auth.user.id);
+    if (error) throw new Error(error.message);
+  }
+
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function saveLocale(locale: "th" | "en") {
+  const nextLocale = z.enum(["th", "en"]).parse(locale);
+  const { theme } = await getPreferences();
+  await setPreferenceCookies(nextLocale, theme);
+
+  const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (auth.user) {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ locale: nextLocale, updated_at: new Date().toISOString() })
       .eq("id", auth.user.id);
     if (error) throw new Error(error.message);
   }

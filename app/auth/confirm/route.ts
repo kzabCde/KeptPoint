@@ -12,6 +12,11 @@ function desiredUsername(user: User | null) {
   return USERNAME_RE.test(candidate) ? candidate : "";
 }
 
+function desiredLocale(user: User | null) {
+  const metadata = user?.user_metadata as Record<string, unknown> | undefined;
+  return isLocale(metadata?.locale) ? metadata.locale : null;
+}
+
 export async function GET(request: NextRequest) {
   const tokenHash = request.nextUrl.searchParams.get("token_hash");
   const type = request.nextUrl.searchParams.get("type") as EmailOtpType | null;
@@ -45,12 +50,11 @@ export async function GET(request: NextRequest) {
     .eq("id", user.id)
     .maybeSingle();
 
-  if (profile && isLocale(profile.locale) && isTheme(profile.theme)) {
-    await setPreferenceCookies(profile.locale, profile.theme);
-  }
-
   let username = profile?.username ?? null;
   const pendingUsername = desiredUsername(user);
+  const signupLocale = desiredLocale(user);
+  let locale = profile && isLocale(profile.locale) ? profile.locale : null;
+  if (!username && signupLocale) locale = signupLocale;
 
   if (!username && pendingUsername) {
     const { data: saved, error: saveError } = await supabase
@@ -58,6 +62,7 @@ export async function GET(request: NextRequest) {
       .update({
         username: pendingUsername,
         display_name: profile?.display_name || pendingUsername,
+        ...(signupLocale ? { locale: signupLocale } : {}),
         password_set: true,
         updated_at: new Date().toISOString(),
       })
@@ -74,6 +79,10 @@ export async function GET(request: NextRequest) {
       response.headers.set("Cache-Control", "private, no-store");
       return response;
     }
+  }
+
+  if (locale && profile && isTheme(profile.theme)) {
+    await setPreferenceCookies(locale, profile.theme);
   }
 
   if (type === "recovery") {
