@@ -1,0 +1,21 @@
+import Link from "next/link";
+import { ArrowRight, CheckCircle2, QrCode, ReceiptText, Target } from "lucide-react";
+import { getLocale } from "@/lib/preferences";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function OperationsPage({ params }: { params: Promise<{ slug: string }> }) {
+  const [{ slug }, locale, supabase] = await Promise.all([params, getLocale(), createClient()]);
+  const th = locale === "th";
+  const { data: program } = await supabase.from("programs").select("id,name").eq("slug",slug).maybeSingle();
+  if (!program) return <main className="p-6 text-sm text-slate-500">{th ? "ไม่พบโปรแกรม" : "Program not found."}</main>;
+  const [pendingRewards, pendingCoupons, recent] = await Promise.all([
+    supabase.from("reward_redemptions").select("id", {count:"exact",head:true}).eq("program_id",program.id).in("status",["pending","reserved"]),
+    supabase.from("coupon_redemptions").select("id", {count:"exact",head:true}).eq("program_id",program.id).eq("status","claimed"),
+    supabase.from("point_transactions").select("id,amount,type,source,created_at").eq("program_id",program.id).order("created_at",{ascending:false}).limit(6),
+  ]);
+  return <main className="p-5 sm:p-7 lg:p-8"><div className="mx-auto max-w-5xl"><p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.14em] text-[#087F6E]"><Target className="size-4"/>Operations</p><h1 className="mt-2 text-3xl font-semibold tracking-[-.045em]">{th ? "หน้าปฏิบัติงาน" : "Operations"}</h1><p className="mt-3 text-sm leading-6 text-slate-500">{th ? "รวมงานที่พนักงานใช้ซ้ำระหว่างให้บริการลูกค้า: QR, การสะสม และการยืนยันสิทธิ์" : "Fast access to the workflows staff repeat at checkout: QR collection and redemption confirmation."}</p>
+    <section className="mt-7 grid gap-4 md:grid-cols-2"><OperationCard href={`/programs/${slug}/manage/qr`} icon={QrCode} title={th ? "QR & Collect" : "QR & Collect"} copy={th ? "สร้าง QR สำหรับเข้าร่วม รับแต้ม หรือรับสแตมป์" : "Generate secure QR sessions for joining, points, or stamps."} action={th ? "เปิดเครื่องมือ QR" : "Open QR tools"}/><OperationCard href={`/programs/${slug}/manage/redemptions`} icon={ReceiptText} title={th ? "การแลกสิทธิ์" : "Redemptions"} copy={th ? `${pendingRewards.count ?? 0} รางวัล และ ${pendingCoupons.count ?? 0} คูปอง รอยืนยัน` : `${pendingRewards.count ?? 0} rewards and ${pendingCoupons.count ?? 0} coupons awaiting confirmation`} action={th ? "ตรวจรายการรอยืนยัน" : "Review pending redemptions"}/></section>
+    <section className="mt-8 rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5"><div className="flex items-center gap-2"><CheckCircle2 className="size-5 text-[#087F6E]"/><h2 className="font-semibold">{th ? "ธุรกรรมล่าสุด" : "Recent transactions"}</h2></div><div className="mt-4 divide-y divide-[var(--border)]">{(recent.data ?? []).length===0 && <p className="py-4 text-sm text-slate-500">{th ? "ยังไม่มีธุรกรรม" : "No transactions yet."}</p>}{(recent.data ?? []).map((row) => <div key={row.id} className="flex items-center gap-3 py-3"><span className="grid size-9 place-items-center rounded-xl bg-[#E6FAF6] text-xs font-bold text-[#087F6E]">{row.amount>0?"+":""}{row.amount}</span><div className="min-w-0 flex-1"><p className="text-sm font-semibold">{row.type}</p><p className="text-xs text-slate-400">{row.source} · {new Intl.DateTimeFormat(th?"th-TH":"en-US",{dateStyle:"medium",timeStyle:"short"}).format(new Date(row.created_at))}</p></div></div>)}</div></section>
+  </div></main>;
+}
+function OperationCard({href,icon:Icon,title,copy,action}:{href:string;icon:typeof QrCode;title:string;copy:string;action:string}){return <Link href={href} className="group rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5 transition hover:border-[#10C9A7]/50"><span className="grid size-11 place-items-center rounded-2xl bg-[#E6FAF6] text-[#087F6E]"><Icon className="size-5"/></span><h2 className="mt-5 text-lg font-semibold">{title}</h2><p className="mt-2 text-sm leading-6 text-slate-500">{copy}</p><p className="mt-5 flex items-center gap-2 text-xs font-bold text-[#087F6E]">{action}<ArrowRight className="size-3.5 transition group-hover:translate-x-0.5"/></p></Link>}
