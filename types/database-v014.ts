@@ -1,12 +1,28 @@
 import type { Database as GeneratedDatabase, Json } from "@/types/database";
 
 type ProfilesTable = GeneratedDatabase["public"]["Tables"]["profiles"];
+type ProgramsTable = GeneratedDatabase["public"]["Tables"]["programs"];
+type RewardsTable = GeneratedDatabase["public"]["Tables"]["rewards"];
 
 type ProfilesWithPasswordState = {
   Row: ProfilesTable["Row"] & { password_set: boolean };
   Insert: ProfilesTable["Insert"] & { password_set?: boolean };
   Update: ProfilesTable["Update"] & { password_set?: boolean };
   Relationships: ProfilesTable["Relationships"];
+};
+
+type ProgramsWithLoyaltyMechanics = {
+  Row: ProgramsTable["Row"] & { point_redemption_enabled: boolean; point_tier_enabled: boolean };
+  Insert: ProgramsTable["Insert"] & { point_redemption_enabled?: boolean; point_tier_enabled?: boolean };
+  Update: ProgramsTable["Update"] & { point_redemption_enabled?: boolean; point_tier_enabled?: boolean };
+  Relationships: ProgramsTable["Relationships"];
+};
+
+type RewardsWithStampCard = {
+  Row: RewardsTable["Row"] & { stamp_card_id: string | null };
+  Insert: RewardsTable["Insert"] & { stamp_card_id?: string | null };
+  Update: RewardsTable["Update"] & { stamp_card_id?: string | null };
+  Relationships: RewardsTable["Relationships"] | [{ foreignKeyName: "rewards_stamp_card_id_fkey"; columns: ["stamp_card_id"]; isOneToOne: false; referencedRelation: "stamp_cards"; referencedColumns: ["id"] }];
 };
 
 type ProgramReferralSettings = {
@@ -74,8 +90,10 @@ type GrowthFunctions = {
 
 export type Database = Omit<GeneratedDatabase, "public"> & {
   public: Omit<GeneratedDatabase["public"], "Tables" | "Functions"> & {
-    Tables: Omit<GeneratedDatabase["public"]["Tables"], "profiles"> & {
+    Tables: Omit<GeneratedDatabase["public"]["Tables"], "profiles" | "programs" | "rewards"> & {
       profiles: ProfilesWithPasswordState;
+      programs: ProgramsWithLoyaltyMechanics;
+      rewards: RewardsWithStampCard;
       program_referral_settings: ProgramReferralSettings;
       referral_codes: ReferralCodes;
       referrals: Referrals;

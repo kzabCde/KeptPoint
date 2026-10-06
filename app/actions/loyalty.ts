@@ -25,6 +25,7 @@ export async function createProgram(formData: FormData) {
     requiredStamps: formData.get("requiredStamps") || undefined,
   });
   const { supabase, user } = await requireUser();
+  const pointsCapable = input.programType === "points" || input.programType === "hybrid";
   const { data, error } = await supabase.from("programs").insert({
     owner_id: user.id,
     name: input.name,
@@ -33,17 +34,28 @@ export async function createProgram(formData: FormData) {
     program_type: input.programType,
     visibility: input.visibility,
     currency_name: input.currencyName,
+    point_redemption_enabled: pointsCapable,
+    point_tier_enabled: false,
   }).select("id,slug").single();
   if (error) throw new Error(error.message);
   if ((input.programType === "stamps" || input.programType === "hybrid") && input.requiredStamps) {
-    const { error: stampError } = await supabase.from("stamp_cards").insert({
+    const { data: card, error: stampError } = await supabase.from("stamp_cards").insert({
       program_id: data.id,
       required_stamps: input.requiredStamps,
       name: "Main Stamp Card",
-    });
+    }).select("id").single();
     if (stampError) throw new Error(stampError.message);
+    const { error: rewardError } = await supabase.from("rewards").insert({
+      program_id: data.id,
+      name: "Stamp card reward",
+      description: "Complete the stamp card to unlock this perk.",
+      reward_type: "stamps",
+      stamps_required: input.requiredStamps,
+      stamp_card_id: card.id,
+    });
+    if (rewardError) throw new Error(rewardError.message);
   }
-  redirect(`/programs/${data.slug}/manage`);
+  redirect(`/programs/${data.slug}/manage/loyalty`);
 }
 
 export async function joinProgram(programId: string) {
@@ -87,7 +99,7 @@ const rewardSchema = z.object({
   slug: z.string().min(1),
   name: z.string().trim().min(1).max(100),
   description: z.string().trim().max(500).default(""),
-  rewardType: z.enum(["points", "stamps", "free", "manual"]),
+  rewardType: z.enum(["points", "free", "manual"]),
   cost: z.coerce.number().int().positive().optional(),
   stock: z.coerce.number().int().nonnegative().optional(),
 });
@@ -103,13 +115,20 @@ export async function createReward(formData: FormData) {
     stock: formData.get("stock") || undefined,
   });
   const { supabase } = await requireUser();
+  const { data: program, error: programError } = await supabase.from("programs").select("program_type,point_redemption_enabled").eq("id", input.programId).single();
+  if (programError) throw new Error(programError.message);
+  if (input.rewardType === "points" && (program.program_type === "stamps" || !program.point_redemption_enabled)) {
+    throw new Error("point redemption is disabled for this program");
+  }
+  if (input.rewardType === "points" && input.cost == null) throw new Error("point cost is required");
   const { error } = await supabase.from("rewards").insert({
     program_id: input.programId,
     name: input.name,
     description: input.description,
     reward_type: input.rewardType,
     points_required: input.rewardType === "points" ? input.cost ?? null : null,
-    stamps_required: input.rewardType === "stamps" ? input.cost ?? null : null,
+    stamps_required: null,
+    stamp_card_id: null,
     stock: input.stock ?? null,
   });
   if (error) throw new Error(error.message);

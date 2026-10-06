@@ -12,7 +12,8 @@
       "feat/personal-business-product-redesign": false,
       "feat/growth-referral-coupons-tiers": false,
       "fix/referral-qr-production-flow": false,
-      "fix/store-scoped-referral": false
+      "fix/store-scoped-referral": false,
+      "feat/loyalty-mechanics-separation": false
     }
   }
 }
