@@ -5,18 +5,28 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, isLocale, isTheme, setPreferenceCookies } from "@/lib/preferences";
-import { canonicalAuthOrigin, postAuthDestination } from "@/lib/auth-flow";
+import { canonicalAuthOrigin, postAuthDestination, safeNextPath } from "@/lib/auth-flow";
 import { isEmailSendRateLimit } from "@/lib/auth-errors";
 
 function readEmail(formData: FormData) {
   return String(formData.get("email") ?? "").trim().toLowerCase();
 }
 
-function readCredentials(formData: FormData) {
+function readNext(formData: FormData) {
+  return safeNextPath(String(formData.get("next") ?? ""), "/home");
+}
+
+function authPath(path: string, key: "error" | "status", value: string, next = "/home") {
+  const query = new URLSearchParams({ [key]: value });
+  if (next !== "/home") query.set("next", next);
+  return `${path}?${query.toString()}`;
+}
+
+function readCredentials(formData: FormData, next: string) {
   const email = readEmail(formData);
   const password = String(formData.get("password") ?? "");
-  if (!email || !password) redirect("/login?error=missing-credentials");
-  if (password.length < 8) redirect("/login?error=password-short");
+  if (!email || !password) redirect(authPath("/login", "error", "missing-credentials", next));
+  if (password.length < 8) redirect(authPath("/login", "error", "password-short", next));
   return { email, password };
 }
 
@@ -54,22 +64,24 @@ async function profileForUser(userId: string) {
 }
 
 export async function loginWithEmail(formData: FormData) {
+  const next = readNext(formData);
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithPassword(readCredentials(formData));
-  if (error || !data.user) redirect("/login?error=invalid-credentials");
+  const { data, error } = await supabase.auth.signInWithPassword(readCredentials(formData, next));
+  if (error || !data.user) redirect(authPath("/login", "error", "invalid-credentials", next));
 
   const profile = await profileForUser(data.user.id);
-  redirect(postAuthDestination({ username: profile?.username }));
+  redirect(postAuthDestination({ username: profile?.username }, next));
 }
 
 export async function signUpWithEmail(formData: FormData) {
+  const next = readNext(formData);
   const parsed = signUpSchema.safeParse({
     username: formData.get("username"),
     email: formData.get("email"),
     password: formData.get("password"),
     confirmPassword: formData.get("confirmPassword"),
   });
-  if (!parsed.success) redirect("/signup?error=invalid-fields");
+  if (!parsed.success) redirect(authPath("/signup", "error", "invalid-fields", next));
 
   const origin = await appOrigin();
   const locale = await getLocale();
@@ -78,22 +90,25 @@ export async function signUpWithEmail(formData: FormData) {
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      emailRedirectTo: `${origin}/auth/complete`,
-      data: { desired_username: parsed.data.username, locale },
+      emailRedirectTo: `${origin}/auth/complete?next=${encodeURIComponent(next)}`,
+      data: { desired_username: parsed.data.username, locale, post_auth_next: next },
     },
   });
 
   if (error) {
-    if (isEmailSendRateLimit(error)) redirect("/signup?error=email-rate-limit");
-    redirect("/signup?error=signup-failed");
+    if (isEmailSendRateLimit(error)) redirect(authPath("/signup", "error", "email-rate-limit", next));
+    redirect(authPath("/signup", "error", "signup-failed", next));
   }
 
-  redirect("/signup/check-email");
+  const query = new URLSearchParams();
+  if (next !== "/home") query.set("next", next);
+  redirect(`/signup/check-email${query.size ? `?${query.toString()}` : ""}`);
 }
 
 export async function resendConfirmation(formData: FormData) {
+  const next = readNext(formData);
   const email = readEmail(formData);
-  if (!email) redirect("/signup/check-email?error=email-required");
+  if (!email) redirect(authPath("/signup/check-email", "error", "email-required", next));
 
   const origin = await appOrigin();
   const supabase = await createClient();
@@ -101,15 +116,15 @@ export async function resendConfirmation(formData: FormData) {
     type: "signup",
     email,
     options: {
-      emailRedirectTo: `${origin}/auth/complete`,
+      emailRedirectTo: `${origin}/auth/complete?next=${encodeURIComponent(next)}`,
     },
   });
 
   if (error) {
-    if (isEmailSendRateLimit(error)) redirect("/signup/check-email?error=email-rate-limit");
-    redirect("/signup/check-email?error=resend-failed");
+    if (isEmailSendRateLimit(error)) redirect(authPath("/signup/check-email", "error", "email-rate-limit", next));
+    redirect(authPath("/signup/check-email", "error", "resend-failed", next));
   }
-  redirect("/signup/check-email?status=resent");
+  redirect(authPath("/signup/check-email", "status", "resent", next));
 }
 
 export async function requestPasswordReset(formData: FormData) {
@@ -130,14 +145,15 @@ export async function requestPasswordReset(formData: FormData) {
   redirect("/forgot-password?status=sent");
 }
 
-export async function loginWithGoogle() {
+export async function loginWithGoogle(formData: FormData) {
+  const next = readNext(formData);
   const origin = await appOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: `${origin}/auth/callback?next=/home` },
+    options: { redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}` },
   });
-  if (error || !data.url) redirect("/login?error=google-unavailable");
+  if (error || !data.url) redirect(authPath("/login", "error", "google-unavailable", next));
   redirect(data.url);
 }
 

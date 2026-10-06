@@ -4,6 +4,7 @@ import { signUpWithEmail } from "@/app/actions/auth";
 import { Brand } from "@/components/brand";
 import { PasswordFields } from "@/components/password-fields";
 import { PendingSubmitButton } from "@/components/pending-submit-button";
+import { safeNextPath } from "@/lib/auth-flow";
 import { getLocale } from "@/lib/preferences";
 
 export const metadata = { title: "Create account" };
@@ -14,15 +15,17 @@ const errors = {
   "email-rate-limit": { th: "ระบบส่งอีเมลถึงขีดจำกัดชั่วคราว กรุณารอสักครู่แล้วลองอีกครั้ง", en: "Email sending is temporarily rate-limited. Wait a little and try again." },
 } as const;
 
-export default async function SignupPage({ searchParams }: { searchParams: Promise<{ error?: keyof typeof errors }> }) {
+export default async function SignupPage({ searchParams }: { searchParams: Promise<{ error?: keyof typeof errors; next?: string }> }) {
   const locale = await getLocale();
-  const { error } = await searchParams;
+  const { error, next: requestedNext } = await searchParams;
+  const next = safeNextPath(requestedNext, "/home");
   const th = locale === "th";
+  const loginHref = next === "/home" ? "/login" : `/login?next=${encodeURIComponent(next)}`;
 
   return (
     <main className="auth-canvas min-h-dvh px-5 py-8">
       <div className="mx-auto w-full max-w-md">
-        <Link href="/login" aria-label={th ? "กลับหน้าเข้าสู่ระบบ" : "Back to sign in"} className="cute-icon-button"><ArrowLeft className="size-4"/></Link>
+        <Link href={loginHref} aria-label={th ? "กลับหน้าเข้าสู่ระบบ" : "Back to sign in"} className="cute-icon-button"><ArrowLeft className="size-4"/></Link>
         <div className="mt-6"><Brand/></div>
         <section className="cute-card mt-7 p-6 sm:p-7">
           <div className="flex items-center gap-2 text-xs font-bold text-violet-700 dark:text-violet-200"><Sparkles className="size-4"/>{th ? "เริ่มสะสมความคุ้มค่า" : "Start keeping every reward"}</div>
@@ -38,6 +41,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
           </div>
 
           <form action={signUpWithEmail} className="mt-6 grid gap-5">
+            <input type="hidden" name="next" value={next}/>
             <label className="grid gap-2 text-sm font-semibold">Username<div className="cute-input flex items-center gap-2 px-4"><AtSign className="size-4 shrink-0 text-emerald-600"/><input name="username" required minLength={3} maxLength={30} autoCapitalize="none" autoCorrect="off" spellCheck={false} className="h-12 min-w-0 flex-1 bg-transparent outline-none" placeholder="pump_user"/></div><span className="text-xs font-normal leading-5 text-zinc-500">{th ? "ใช้ a–z, ตัวเลข และ _ ระบบจะแปลงตัวพิมพ์ใหญ่เป็นตัวเล็กให้" : "Use a-z, numbers and _. Uppercase letters are normalized."}</span></label>
             <label className="grid gap-2 text-sm font-semibold">{th ? "อีเมล" : "Email"}<div className="cute-input flex items-center gap-2 px-4"><Mail className="size-4 shrink-0 text-emerald-600"/><input name="email" type="email" required autoComplete="email" className="h-12 min-w-0 flex-1 bg-transparent outline-none" placeholder="you@example.com"/></div></label>
             <PasswordFields locale={locale}/>
@@ -46,7 +50,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
             <PendingSubmitButton pendingLabel={th ? "กำลังสร้างบัญชี…" : "Creating account…"} className="cute-primary inline-flex h-12 items-center justify-center gap-2 rounded-2xl font-semibold"><Mail className="size-4"/>{th ? "สร้างบัญชีและส่งลิงก์ยืนยัน" : "Create account & send verification"}</PendingSubmitButton>
           </form>
 
-          <p className="mt-6 text-center text-sm text-zinc-500">{th ? "มีบัญชีแล้ว?" : "Already have an account?"} <Link href="/login" className="font-semibold text-emerald-700 dark:text-emerald-300">{th ? "เข้าสู่ระบบ" : "Sign in"}</Link></p>
+          <p className="mt-6 text-center text-sm text-zinc-500">{th ? "มีบัญชีแล้ว?" : "Already have an account?"} <Link href={loginHref} className="font-semibold text-emerald-700 dark:text-emerald-300">{th ? "เข้าสู่ระบบ" : "Sign in"}</Link></p>
         </section>
       </div>
     </main>
