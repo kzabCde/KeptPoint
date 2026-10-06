@@ -64,7 +64,8 @@ type ProgramTiers = {
 };
 
 type GrowthFunctions = {
-  accept_referral_invite: { Args: { p_code: string }; Returns: Json };
+  accept_referral_invite: { Args: { p_code: string; p_program_id: string }; Returns: Json };
+  accept_referral_invite_legacy: { Args: { p_code: string }; Returns: Json };
   claim_coupon: { Args: { p_coupon_id: string }; Returns: Json };
   claim_referral: { Args: { p_code: string; p_program_id: string }; Returns: Json };
   get_or_create_referral_code: { Args: { p_program_id: string }; Returns: Json };
